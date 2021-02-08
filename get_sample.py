@@ -38,6 +38,8 @@ while True:
     ## Setup
     """
 
+    # https://stackoverflow.com/questions/50659482/why-cant-i-get-reproducible-results-in-keras-even-though-i-set-the-random-seeds
+
     # Seed value
     # Apparently you may use different seed values at each stage
     seed_value = seed
