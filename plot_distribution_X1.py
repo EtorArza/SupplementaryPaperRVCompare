@@ -26,7 +26,7 @@ print("The fiure has", n_bins_freedman_diaconis(array), "bins.")
 
 fig, ax  = plt.subplots()
 
-ax.hist(array, bins=n_bins_freedman_diaconis(array), density=False, rwidth=0.95)
+ax.hist(array, bins=n_bins_freedman_diaconis(array), density=False, rwidth=0.93,  color='grey', edgecolor='white')
 
 props = dict(boxstyle='round', facecolor='white', alpha=0.25)
 ax.text(0.95, 0.95, f"$n = {len(array)}$",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
