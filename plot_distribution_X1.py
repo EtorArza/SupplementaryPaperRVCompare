@@ -30,7 +30,7 @@ ax.hist(array, bins=n_bins_freedman_diaconis(array), density=False, rwidth=0.93,
 
 props = dict(boxstyle='round', facecolor='white', alpha=0.25)
 ax.text(0.95, 0.95, f"$n = {len(array)}$",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
-plt.xlabel("Error rate")
+plt.xlabel("Error")
 plt.ylabel("Number of samples observed")
 
 plt.savefig('figures/X1_dist.pdf')

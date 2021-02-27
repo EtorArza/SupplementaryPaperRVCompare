@@ -38,13 +38,13 @@ for i, ax in enumerate((ax1, ax2)):
     print("The fiure has", n_bins_freedman_diaconis(array), "bins.")
 
 
-    ax.hist(array, bins=n_bins_freedman_diaconis(array) // 20, density=True, rwidth=1.0, color='grey', edgecolor='grey')
+    ax.hist(array, bins=n_bins_freedman_diaconis(array) // 20, density=True, rwidth=1.0, color='silver', edgecolor='silver')
 
     props = dict(boxstyle='round', facecolor='white', alpha=0.25)
     #ax.text(0.95, 0.95, "$n = {:.0e}$".format(len(array)),  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
-    ax.text(0.95, 0.55, f"Classifier {'A' if i==0 else 'B'}",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
+    ax.text(0.95, 0.55, f"Item {'A' if i==0 else 'B'}",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
     ax.axvline(average, color = 'black', ls='--', lw = 0.85, label=r"Expected value")
-    plt.xlabel("Error rate")
+    plt.xlabel("Error")
     plt.ylabel("                                        Probability density")
 
 ax1.legend(bbox_to_anchor=(0.75, 1.25), loc='upper left')
