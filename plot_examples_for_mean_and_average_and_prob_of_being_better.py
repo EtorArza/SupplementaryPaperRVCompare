@@ -5,6 +5,10 @@ from scipy import stats
 import matplotlib.style as style
 import matplotlib
 from tqdm import tqdm as tqdm
+import math
+from decimal import *
+
+
 matplotlib.rcParams['mathtext.fontset'] = 'custom'
 matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
 matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
@@ -61,8 +65,72 @@ def get_pareto_of_error_rate(array):
         values[i] = array_sorted[round(i * n / N_POINTS)]
     return cum_prob, values
 
-for example_idx in (0,1,2):
 
+def f_divergence(X_A_observed, X_B_observed, f, nbins):
+
+    print("WARNING: this does not work, and wolfram mathematica was used instead, to avoid wasting time fiddling with numerical errors.")
+    raise ValueError
+    x_min = min((min(X_A_observed), min(X_B_observed)))
+    x_max = max((max(X_A_observed), max(X_B_observed)))
+
+    getcontext().prec = 200
+
+
+    assert len(X_A_observed) == len(X_B_observed)
+    n = len(X_B_observed)
+
+
+    X_A_observed = np.sort(X_A_observed)
+    X_B_observed = np.sort(X_B_observed)
+
+    last_x = None
+    i = -1
+    res = Decimal(0)
+    for x in tqdm(np.linspace(x_min, x_max, nbins)):
+        if last_x == None:
+            last_x = x
+            continue
+        i+= 1
+
+        if i == 0:
+            g_A = len(X_A_observed[(X_A_observed >= last_x) & (X_A_observed <= x)]) / n
+            g_B = len(X_B_observed[(X_B_observed >= last_x) & (X_B_observed <= x)]) / n
+        else:
+            g_A = len(X_A_observed[(X_A_observed >= last_x) & (X_A_observed <= x)]) / n
+            g_B = len(X_B_observed[(X_B_observed >= last_x) & (X_B_observed <= x)]) / n
+
+        if g_B == 0 and g_A == 0:
+            res += 0
+            continue
+
+        elif g_B == 0:
+            g_B = 1e-100
+
+        elif g_A == 0:
+            g_A = 1e-100
+
+        assert g_A / g_B >= 0
+        g_A = Decimal(g_A)
+        g_B = Decimal(g_B)
+
+        integrand_i = Decimal(g_B * f(g_A / g_B)) 
+        res += round(integrand_i, ndigits=90) * Decimal(x - last_x)
+
+
+    print(res)
+    assert res > 0
+    return float(res)
+
+
+
+        
+    
+
+
+for example_idx in (0,1,2):
+    print("-------------")
+    print("EXAMPLE",example_idx+1)
+    print("-------------")
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=True)
     avgs = []
     medians = []
@@ -103,8 +171,8 @@ for example_idx in (0,1,2):
         print("The fiure would have according to freedman_diaconis", n_bins_freedman_diaconis(array), "bins.")
 
         n_steps_line = 10
-        nbins = (max(array)-min(array)) / bin_length
-        ax.hist(array, bins=int(nbins), density=True, rwidth=1.0, color='silver', edgecolor='silver')
+        nbins = int((max(array)-min(array)) / bin_length)
+        ax.hist(array, bins=nbins, density=True, rwidth=1.0, color='silver', edgecolor='silver')
 
         props = dict(boxstyle='round', facecolor='white', alpha=0.25)
         #ax.text(0.95, 0.95, "$n = {:.0e}$".format(len(array)),  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
@@ -127,7 +195,7 @@ for example_idx in (0,1,2):
     by_label = dict(zip(labels, handles))
     ax1.legend(by_label.values(), by_label.keys(),bbox_to_anchor=(0.6, 1.3725), loc='upper left', framealpha=1.0, )
 
-
+    plt.tight_layout()
     plt.savefig(f'figures/example_{example_idx+1}_mean_median_prob_better.pdf')
     plt.savefig(f'../paper/images/example_{example_idx+1}_mean_median_prob_better.pdf')
     plt.close()
@@ -135,11 +203,17 @@ for example_idx in (0,1,2):
 
     if COMPUTE_PROB: 
         estimation, error = estimate_prob_X_le_Y(array_list[0], array_list[1])
-        print("\nP(X_A < X_B)", estimation, " in ", (estimation-error, estimation+error))
+        print("\nP(X_A < X_B) =", estimation, " in ", (estimation-error, estimation+error))
+        print("P_C(X_A,X_B) =", estimation*2 -1)
+        # print("KL-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) * (x.ln()), nbins=nbins))
+        # print("JS-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) * (Decimal(2)*Decimal(x) / Decimal(x + 1)).ln() + (Decimal(2) / Decimal(x + Decimal(1))).ln(), nbins=nbins))
+        # print("TotalVariation-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(0.5) * abs(x-Decimal(1)), nbins=nbins))
+        # print("Helligner-dist: ", math.sqrt(f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) - Decimal(2)*(x.sqrt()) + Decimal(1), nbins=nbins))) # x - 2*math.sqrt(x) + 1 = (1 + sqrt x)^2
+
 
     for i, array in enumerate(array_list):
         cum_prob, error_rate_upper_bound = get_pareto_of_error_rate(array)
-        plt.plot(error_rate_upper_bound, cum_prob, label=f"Classifier {'A' if i==0 else 'B'}", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
+        plt.plot(error_rate_upper_bound, cum_prob, label=f"Item {'A' if i==0 else 'B'}", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
     plt.plot(np.minimum(get_pareto_of_error_rate(array_list[0])[1], get_pareto_of_error_rate(array_list[1])[1]), cum_prob, color='black', ls=":", linewidth =0.75, label="Pareto front")
     left_xlim, right_xlim = plt.xlim()  # return the current xlim
     linewidth = 0.75
@@ -153,6 +227,7 @@ for example_idx in (0,1,2):
     plt.ylabel("$F_A(x)$ and $F_B(x)$")
     plt.gca().invert_yaxis()
     plt.legend()
+    plt.tight_layout()
     plt.savefig(f'figures/example_{example_idx+1}_pareto.pdf')
     plt.savefig(f'../paper/images/example_{example_idx+1}_pareto.pdf')
 
