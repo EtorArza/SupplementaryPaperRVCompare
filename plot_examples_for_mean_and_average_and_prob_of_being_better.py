@@ -66,6 +66,58 @@ def get_pareto_of_error_rate(array):
     return cum_prob, values
 
 
+def get_indicator_integral_F_A_comp_F_B(X_A_observed, X_B_observed, nbins, comparison_operator="<"):
+    
+    EPSILON = 0.01
+    
+    x_min = min((min(X_A_observed), min(X_B_observed)))
+    x_max = max((max(X_A_observed), max(X_B_observed)))
+
+
+
+    assert len(X_A_observed) == len(X_B_observed)
+    n = len(X_B_observed)
+
+
+    X_A_observed = np.sort(X_A_observed)
+    X_B_observed = np.sort(X_B_observed)
+
+    last_x = None
+    i = -1
+    res = Decimal(0)
+
+    cases_condition_true = 0
+    bin_len = (nbins - 1) / (x_max - x_min)
+
+    F_A_x = 0
+    F_B_x = 0
+
+    for x in tqdm(np.linspace(x_min, x_max, nbins)):
+        if last_x == None:
+            last_x = x
+            continue
+        i+= 1
+        
+        F_A_x = len(X_A_observed[X_A_observed <= x]) / n
+        F_B_x = len(X_B_observed[X_B_observed <= x]) / n
+
+        if comparison_operator == "<":
+            if F_A_x - F_B_x < -EPSILON:
+                cases_condition_true += 1
+        elif comparison_operator == "=":
+            if abs(F_A_x - F_B_x) < EPSILON:
+                cases_condition_true += 1
+        elif comparison_operator == ">":
+            if F_A_x - F_B_x > EPSILON:
+                cases_condition_true += 1
+        else:
+            print(f"ERROR: Operator {comparison_operator} is not valid.")
+            raise ArithmeticError
+    return cases_condition_true * bin_length
+
+
+
+
 def f_divergence(X_A_observed, X_B_observed, f, nbins):
 
     print("WARNING: this does not work, and wolfram mathematica was used instead, to avoid wasting time fiddling with numerical errors.")
@@ -127,7 +179,7 @@ def f_divergence(X_A_observed, X_B_observed, f, nbins):
     
 
 
-for example_idx in (0,1,2):
+for example_idx in (0,1,2, 3):
     print("-------------")
     print("EXAMPLE",example_idx+1)
     print("-------------")
@@ -159,6 +211,15 @@ for example_idx in (0,1,2):
                 df = pd.DataFrame(np.append(np.random.normal(loc = 0.20, scale = 0.05, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0))) + 0.1)
             else: #Classifier B
                 df = pd.DataFrame(np.append(np.random.normal(loc = 0.20, scale = 0.05, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0))) + 0.12)
+
+
+        elif example_idx == 3:
+            bin_length = 0.0004
+            if i == 0: #Classifier A
+                df = pd.DataFrame(np.append(np.random.normal(loc = 0.30, scale = 0.025, size = int(n*0.95)),np.random.normal(loc =0.10, scale = 0.0025, size = int(n*0.05))))
+            else: #Classifier B
+                df = pd.DataFrame(np.append(np.random.normal(loc = 0.30, scale = 0.025, size = int(n*0.95)),np.random.normal(loc =0.15, scale = 0.0025, size = int(n*0.05))))
+
 
 
         array = np.array((df.iloc[:,0]))
@@ -205,6 +266,8 @@ for example_idx in (0,1,2):
         estimation, error = estimate_prob_X_le_Y(array_list[0], array_list[1])
         print("\nP(X_A < X_B) =", estimation, " in ", (estimation-error, estimation+error))
         print("P_C(X_A,X_B) =", estimation*2 -1)
+        print("indicator F_X_A > F_X_B =", get_indicator_integral_F_A_comp_F_B(array_list[0],array_list[1],nbins, ">"))
+        print("indicator F_X_A < F_X_B =", get_indicator_integral_F_A_comp_F_B(array_list[0],array_list[1],nbins, "<"))
         # print("KL-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) * (x.ln()), nbins=nbins))
         # print("JS-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) * (Decimal(2)*Decimal(x) / Decimal(x + 1)).ln() + (Decimal(2) / Decimal(x + Decimal(1))).ln(), nbins=nbins))
         # print("TotalVariation-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(0.5) * abs(x-Decimal(1)), nbins=nbins))
