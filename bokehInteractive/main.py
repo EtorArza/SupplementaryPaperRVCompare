@@ -10,7 +10,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider, TextInput
 from bokeh.plotting import figure
-from bokeh.models import CustomJS, Slider
+from bokeh.models import CustomJS, Slider, Label
 
 
 
@@ -57,12 +57,16 @@ x_range = (0.03,0.07)
 n = 10000000
 nbins = 2000
 
-tauparam = 0.05
-lambdaparam = 0.0
+tauparam = 0.1
+lambdaparam = 0
+
+binsize = (x_range[1] - x_range[0]) / (nbins - 1)
+
+print(binsize)
 
 normal1 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
-normal2 = np.random.normal(loc = 0.0505, scale = 0.0025, size = n)
-normaltau = np.random.normal(loc = 0.0475, scale = 0.0025, size = n)
+normal2 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
+normaltau = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
 
 
 ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
@@ -77,7 +81,7 @@ x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middl
 
 
 
-source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=ya.cumsum().tolist(), ybcum=yb.cumsum().tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), tauparam=[tauparam]*len(ya.tolist()), lambdaparam=[lambdaparam]*len(ya.tolist())))
+source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist()))
 
 plot1_prob = figure()
 plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
@@ -87,72 +91,39 @@ plot1_cum = figure()
 plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.6, color="orange")
 plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.6)
 
-
-
-callLambdaLocation = CustomJS(args=dict(source=source), code="""
-    var data = source.data;
-    var f = cb_obj.value
-    var ynormal2 = data['ynormal2']
-    var ytau = data['ytau']
-
-    var tauparam = data['tauparam']
-    var lambdaparam = data['lambdaparam']
-
-    lambdaparam[0] = f
-
-    var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
-    var indexAfterOffset = 0
-
-
-    var yb = data['yb']
-
-    var ybcum = data['ybcum']
-    var cumprob = 0
-    for (var i = 0; i < yb.length; i++) {
-        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]    
-        cumprob = cumprob + yb[i]
-        ybcum[i] = cumprob
-    }
-    source.change.emit();
-""")
-
-callTauSize = CustomJS(args=dict(source=source), code="""
-    var data = source.data;
-    var f = cb_obj.value
-
-
-    var ynormal2 = data['ynormal2']
-    var ytau = data['ytau']
-
-    var tauparam = data['tauparam']
-    var lambdaparam = data['lambdaparam']
-
-    tauparam[0] = f
-
-    var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
-    var indexAfterOffset = 0
-
-
-
-    var yb = data['yb']
-
-    var ybcum = data['ybcum']
-    var cumprob = 0
-    for (var i = 0; i < yb.length; i++) {
-        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]
-        cumprob = cumprob + yb[i]
-        ybcum[i] = cumprob
-    }
-    source.change.emit();
-""")
+plot1_values = figure()
+plot1_values.text(0, 0, text='color', text_color='text_color',
+        alpha=0.6667, text_font_size='48px', text_baseline='middle',
+        text_align='center', source=source)
 
 
 sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=x[1]-x[0], title="lambda", format="0[.]0000")
 sliderTauSize = Slider(start=0.0, end=0.2, value=tauparam, step=.01, title="tau")
-sliderTauLocation.js_on_change('value', callLambdaLocation)
-sliderTauSize.js_on_change('value', callTauSize)
+
+callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdaparam=sliderTauLocation), code="""
+    var data = source.data;
+    var ynormal2 = data['ynormal2']
+    var ytau = data['ytau']
+    var binsize = 0.00002001
+
+    var labdaImpliesIndexOfset = Math.round(lambdaparam.value / binsize);
+    var indexAfterOffset = 0
+
+
+    var yb = data['yb']
+    var ybcum = data['ybcum']
+    var cumprob = 0
+    for (var i = 0; i < yb.length; i++) {
+        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
+        yb[i] = ynormal2[i] * (1 - tauparam.value) + ytau[indexAfterOffset] * tauparam.value
+        cumprob = cumprob + yb[i] * binsize
+        ybcum[i] = cumprob
+    }
+    source.change.emit();
+""")
+
+sliderTauLocation.js_on_change('value', callback1)
+sliderTauSize.js_on_change('value', callback1)
 
 layout1 = column(sliderTauLocation, sliderTauSize, row(plot1_prob, plot1_cum))
 
