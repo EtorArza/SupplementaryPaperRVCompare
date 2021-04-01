@@ -77,7 +77,6 @@ x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middl
 
 
 
-
 source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), tauparam=[tauparam]*len(ya.tolist()), lambdaparam=[lambdaparam]*len(ya.tolist())))
 
 plot1 = figure()
@@ -95,11 +94,13 @@ callLambdaLocation = CustomJS(args=dict(source=source), code="""
 
     lambdaparam[0] = f
 
+    var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
+
 
     var yb = data['yb']
 
     for (var i = 0; i < yb.length; i++) {
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i] * tauparam[0]
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i + labdaImpliesIndexOfset] * tauparam[0]
     }
     source.change.emit();
 """)
@@ -117,17 +118,20 @@ callTauSize = CustomJS(args=dict(source=source), code="""
 
     tauparam[0] = f
 
+    var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
+
+
 
     var yb = data['yb']
 
     for (var i = 0; i < yb.length; i++) {
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i] * tauparam[0]
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i + labdaImpliesIndexOfset] * tauparam[0]
     }
     source.change.emit();
 """)
 
 
-sliderTauLocation = Slider(start=-0.1, end=0.1, value=lambdaparam, step=.01, title="lambda")
+sliderTauLocation = Slider(start=-0.1, end=0.1, value=lambdaparam, step=x[1]-x[0], title="lambda")
 sliderTauSize = Slider(start=0.0, end=1.0, value=tauparam, step=.01, title="tau")
 sliderTauLocation.js_on_change('value', callLambdaLocation)
 sliderTauSize.js_on_change('value', callTauSize)
