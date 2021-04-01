@@ -2,17 +2,18 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 from include_in_html import *
+import pandas as pd
 
-plot = figure()
-plot.circle([1,2], [3,4])
-plot.plot_height = 400
-plot.plot_width = 400
+import numpy as np
+
+from bokeh.io import curdoc
+from bokeh.layouts import column, row
+from bokeh.models import ColumnDataSource, Slider, TextInput
+from bokeh.plotting import figure
+from bokeh.models import CustomJS, Slider
 
 
-plot2 = figure()
-plot2.circle([1,2], [3,4])
-plot2.plot_height = 400
-plot2.plot_width = 400
+
 
 
 html_filepath = "../../../EtorArza.github.io/pages/2021-interactive-comparing-RV.html"
@@ -46,10 +47,52 @@ def process_html_into_includable_section(inputhtml):
 
 
 
-# html_to_be_included.split("\n")
-# html_to_be_included = "\n".join([el.strip(" ") for el in html_to_be_included])
+print("-------------")
+print("EXAMPLE: show that properties prop:scale_of_portions and prop:prop:bounds_with_interpretation are incompatible ")
+print("-------------")
+avgs = []
+medians = []
+array_list = []
+n = 10000000
+bin_length = 0.00005
+dfA = np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.45)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.47)))
+dfB = np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.47)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.45)))+0.01
 
 
 
-include_in_html(process_html_into_includable_section(file_html(plot, CDN, "my plot")), "test1", html_filepath)
+x = [x*0.005 for x in range(0, 200)]
+y = x
+
+source = ColumnDataSource(data=dict(x=x, y=y))
+
+plot1 = figure()
+plot1.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
+
+callback = CustomJS(args=dict(source=source), code="""
+    var data = source.data;
+    var f = cb_obj.value
+    var x = data['x']
+    var y = data['y']
+    for (var i = 0; i < x.length; i++) {
+        y[i] = Math.pow(x[i], f)
+    }
+    source.change.emit();
+""")
+
+slider = Slider(start=0.1, end=4, value=1, step=.1, title="power")
+slider.js_on_change('value', callback)
+
+layout1 = column(slider, plot1)
+
+
+
+include_in_html(process_html_into_includable_section(file_html(layout1, CDN, "my plot")), "test1", html_filepath)
+
+
+
+plot2 = figure()
+plot2.circle([1,2], [3,4])
+plot2.plot_height = 400
+plot2.plot_width = 400
+
 include_in_html(process_html_into_includable_section(file_html(plot2, CDN, "my plot")), "test2", html_filepath)
