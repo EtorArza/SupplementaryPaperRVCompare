@@ -95,12 +95,14 @@ callLambdaLocation = CustomJS(args=dict(source=source), code="""
     lambdaparam[0] = f
 
     var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
+    var indexAfterOffset = 0
 
 
     var yb = data['yb']
 
     for (var i = 0; i < yb.length; i++) {
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i + labdaImpliesIndexOfset] * tauparam[0]
+        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]    
     }
     source.change.emit();
 """)
@@ -119,13 +121,15 @@ callTauSize = CustomJS(args=dict(source=source), code="""
     tauparam[0] = f
 
     var labdaImpliesIndexOfset = Math.round(lambdaparam[0] / 0.00004);
+    var indexAfterOffset = 0
 
 
 
     var yb = data['yb']
 
     for (var i = 0; i < yb.length; i++) {
-        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i + labdaImpliesIndexOfset] * tauparam[0]
+        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]
     }
     source.change.emit();
 """)
