@@ -55,14 +55,14 @@ x_range = (0.03,0.07)
 
 
 n = 10000000
-nbins = 1000
+nbins = 2000
 
 tauparam = 0.05
 lambdaparam = 0.0
 
-normal1 = np.random.normal(loc = 0.05, scale = 0.00125, size = n)
-normal2 = np.random.normal(loc = 0.0525, scale = 0.00125, size = n)
-normaltau = np.random.normal(loc = 0.0475, scale = 0.00125, size = n)
+normal1 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
+normal2 = np.random.normal(loc = 0.0505, scale = 0.0025, size = n)
+normaltau = np.random.normal(loc = 0.0475, scale = 0.0025, size = n)
 
 
 ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
@@ -77,11 +77,17 @@ x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middl
 
 
 
-source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), tauparam=[tauparam]*len(ya.tolist()), lambdaparam=[lambdaparam]*len(ya.tolist())))
+source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=ya.cumsum().tolist(), ybcum=yb.cumsum().tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), tauparam=[tauparam]*len(ya.tolist()), lambdaparam=[lambdaparam]*len(ya.tolist())))
 
-plot1 = figure()
-plot1.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
-plot1.line('x', 'yb', source=source, line_width=3, line_alpha=0.6)
+plot1_prob = figure()
+plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
+plot1_prob.line('x', 'yb', source=source, line_width=3, line_alpha=0.6)
+
+plot1_cum = figure()
+plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.6, color="orange")
+plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.6)
+
+
 
 callLambdaLocation = CustomJS(args=dict(source=source), code="""
     var data = source.data;
@@ -100,9 +106,13 @@ callLambdaLocation = CustomJS(args=dict(source=source), code="""
 
     var yb = data['yb']
 
+    var ybcum = data['ybcum']
+    var cumprob = 0
     for (var i = 0; i < yb.length; i++) {
         indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
         yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]    
+        cumprob = cumprob + yb[i]
+        ybcum[i] = cumprob
     }
     source.change.emit();
 """)
@@ -127,20 +137,24 @@ callTauSize = CustomJS(args=dict(source=source), code="""
 
     var yb = data['yb']
 
+    var ybcum = data['ybcum']
+    var cumprob = 0
     for (var i = 0; i < yb.length; i++) {
         indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
         yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[indexAfterOffset] * tauparam[0]
+        cumprob = cumprob + yb[i]
+        ybcum[i] = cumprob
     }
     source.change.emit();
 """)
 
 
-sliderTauLocation = Slider(start=-0.1, end=0.1, value=lambdaparam, step=x[1]-x[0], title="lambda")
-sliderTauSize = Slider(start=0.0, end=1.0, value=tauparam, step=.01, title="tau")
+sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=x[1]-x[0], title="lambda", format="0[.]0000")
+sliderTauSize = Slider(start=0.0, end=0.2, value=tauparam, step=.01, title="tau")
 sliderTauLocation.js_on_change('value', callLambdaLocation)
 sliderTauSize.js_on_change('value', callTauSize)
 
-layout1 = column(sliderTauLocation, sliderTauSize, plot1)
+layout1 = column(sliderTauLocation, sliderTauSize, row(plot1_prob, plot1_cum))
 
 
 
