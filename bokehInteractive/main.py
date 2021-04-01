@@ -60,29 +60,48 @@ dfB = np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.47)
 
 
 
-x = [x*0.005 for x in range(0, 200)]
-y = x
+xa = [x*0.005 for x in range(0, 200)]
+ya = xa
+xb = [x*0.005 for x in range(0, 200)]
+yb = [el*2 for el in xb]
 
-source = ColumnDataSource(data=dict(x=x, y=y))
+
+
+source = ColumnDataSource(data=dict(xa=xa, ya=ya, xb=xb, yb=yb))
 
 plot1 = figure()
-plot1.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
+plot1.line('xa', 'ya', source=source, line_width=3, line_alpha=0.6)
+plot1.line('xb', 'yb', source=source, line_width=3, line_alpha=0.6)
 
-callback = CustomJS(args=dict(source=source), code="""
+callbacka = CustomJS(args=dict(source=source), code="""
     var data = source.data;
-    var f = cb_obj.value
-    var x = data['x']
-    var y = data['y']
-    for (var i = 0; i < x.length; i++) {
-        y[i] = Math.pow(x[i], f)
+    var fa = cb_obj.value
+    var xa = data['xa']
+    var ya = data['ya']
+    for (var i = 0; i < xa.length; i++) {
+        ya[i] = Math.pow(xa[i], fa)
     }
     source.change.emit();
 """)
 
-slider = Slider(start=0.1, end=4, value=1, step=.1, title="power")
-slider.js_on_change('value', callback)
+callbackb = CustomJS(args=dict(source=source), code="""
+    var data = source.data;
+    var fb = cb_obj.value
+    var xb = data['xb']
+    var yb = data['yb']
+    for (var i = 0; i < xb.length; i++) {
+        yb[i] = 2 * Math.pow(xb[i], fb)
+    }
+    source.change.emit();
+""")
 
-layout1 = column(slider, plot1)
+
+slidera = Slider(start=0.1, end=4, value=1, step=.1, title="power1")
+sliderb = Slider(start=0.1, end=4, value=1, step=.1, title="power2")
+slidera.js_on_change('value', callbacka)
+sliderb.js_on_change('value', callbackb)
+
+layout1 = column(slidera, sliderb, plot1)
 
 
 
