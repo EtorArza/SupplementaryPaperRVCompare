@@ -50,58 +50,89 @@ def process_html_into_includable_section(inputhtml):
 print("-------------")
 print("EXAMPLE: show that properties prop:scale_of_portions and prop:prop:bounds_with_interpretation are incompatible ")
 print("-------------")
-avgs = []
-medians = []
-array_list = []
+
+x_range = (0.03,0.07)
+
+
 n = 10000000
-bin_length = 0.00005
-dfA = np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.45)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.47)))
-dfB = np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.47)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.45)))+0.01
+nbins = 1000
+
+tauparam = 0.05
+lambdaparam = 0.0
+
+normal1 = np.random.normal(loc = 0.05, scale = 0.00125, size = n)
+normal2 = np.random.normal(loc = 0.0525, scale = 0.00125, size = n)
+normaltau = np.random.normal(loc = 0.0475, scale = 0.00125, size = n)
+
+
+ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
+ynormal2, _ = np.histogram(normal2, density=True, range=x_range, bins=nbins)
+ytau, _ = np.histogram(normaltau, density=True, range=x_range, bins=nbins)
+
+
+ya = ynormal1
+yb = ynormal2 * (1-tauparam) + ytau*tauparam
+
+x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middle of bins
 
 
 
-xa = [x*0.005 for x in range(0, 200)]
-ya = xa
-xb = [x*0.005 for x in range(0, 200)]
-yb = [el*2 for el in xb]
 
-
-
-source = ColumnDataSource(data=dict(xa=xa, ya=ya, xb=xb, yb=yb))
+source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), tauparam=[tauparam]*len(ya.tolist()), lambdaparam=[lambdaparam]*len(ya.tolist())))
 
 plot1 = figure()
-plot1.line('xa', 'ya', source=source, line_width=3, line_alpha=0.6)
-plot1.line('xb', 'yb', source=source, line_width=3, line_alpha=0.6)
+plot1.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
+plot1.line('x', 'yb', source=source, line_width=3, line_alpha=0.6)
 
-callbacka = CustomJS(args=dict(source=source), code="""
+callLambdaLocation = CustomJS(args=dict(source=source), code="""
     var data = source.data;
-    var fa = cb_obj.value
-    var xa = data['xa']
-    var ya = data['ya']
-    for (var i = 0; i < xa.length; i++) {
-        ya[i] = Math.pow(xa[i], fa)
-    }
-    source.change.emit();
-""")
+    var f = cb_obj.value
+    var ynormal2 = data['ynormal2']
+    var ytau = data['ytau']
 
-callbackb = CustomJS(args=dict(source=source), code="""
-    var data = source.data;
-    var fb = cb_obj.value
-    var xb = data['xb']
+    var tauparam = data['tauparam']
+    var lambdaparam = data['lambdaparam']
+
+    lambdaparam[0] = f
+
+
     var yb = data['yb']
-    for (var i = 0; i < xb.length; i++) {
-        yb[i] = 2 * Math.pow(xb[i], fb)
+
+    for (var i = 0; i < yb.length; i++) {
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i] * tauparam[0]
+    }
+    source.change.emit();
+""")
+
+callTauSize = CustomJS(args=dict(source=source), code="""
+    var data = source.data;
+    var f = cb_obj.value
+
+
+    var ynormal2 = data['ynormal2']
+    var ytau = data['ytau']
+
+    var tauparam = data['tauparam']
+    var lambdaparam = data['lambdaparam']
+
+    tauparam[0] = f
+
+
+    var yb = data['yb']
+
+    for (var i = 0; i < yb.length; i++) {
+        yb[i] = ynormal2[i] * (1 - tauparam[0]) + ytau[i] * tauparam[0]
     }
     source.change.emit();
 """)
 
 
-slidera = Slider(start=0.1, end=4, value=1, step=.1, title="power1")
-sliderb = Slider(start=0.1, end=4, value=1, step=.1, title="power2")
-slidera.js_on_change('value', callbacka)
-sliderb.js_on_change('value', callbackb)
+sliderTauLocation = Slider(start=-0.1, end=0.1, value=lambdaparam, step=.01, title="lambda")
+sliderTauSize = Slider(start=0.0, end=1.0, value=tauparam, step=.01, title="tau")
+sliderTauLocation.js_on_change('value', callLambdaLocation)
+sliderTauSize.js_on_change('value', callTauSize)
 
-layout1 = column(slidera, sliderb, plot1)
+layout1 = column(sliderTauLocation, sliderTauSize, plot1)
 
 
 
