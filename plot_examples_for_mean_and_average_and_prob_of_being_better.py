@@ -54,7 +54,7 @@ def estimate_prob_X_le_Y(X,Y):
     
     return new_prob, target_error
 
-def get_pareto_of_error_rate(array):
+def get_x_and_Gx_of_cumulative_distribuition(array):
     N_POINTS = 100000
     array_sorted = np.sort(array)
     n = len(array)
@@ -235,22 +235,22 @@ for example_idx in (0,1,2, 3):
         nbins = int((max(array)-min(array)) / bin_length)
         ax.hist(array, bins=nbins, density=True, rwidth=1.0, color='silver', edgecolor='silver')
 
-        props = dict(boxstyle='round', facecolor='white', alpha=0.25)
-        #ax.text(0.95, 0.95, "$n = {:.0e}$".format(len(array)),  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
-        ax.text(0.95 if example_idx == 0 or example_idx==2 else 0.2, 0.55, f"Item {'A' if i==0 else 'B'}",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
+        ax.text(0.95 if example_idx == 0 or example_idx==2 else 0.2, 0.55, f"$X_{'A' if i==0 else 'B'}$",  color='black',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right',)
+
+
 
     for i, ax in enumerate((ax1, ax2)):
         y_lim = max(ax1.get_ylim(),ax2.get_ylim())
         linewidth = 0.75
-        ax.plot([avgs[i]]*n_steps_line,np.linspace(0,y_lim, n_steps_line),  marker="x", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Expected value (Average)", color = next(ax._get_lines.prop_cycler)['color'])
-        ax.plot([medians[i]]*n_steps_line,np.linspace(0,y_lim,n_steps_line),  marker="s", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Median", color = next(ax._get_lines.prop_cycler)['color'])
+        ax.plot([avgs[i]]*n_steps_line,np.linspace(0,y_lim, n_steps_line),  marker="x", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Expected value (Average)", color = 'black')
+        ax.plot([medians[i]]*n_steps_line,np.linspace(0,y_lim,n_steps_line),  marker="s", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Median", color = 'black')
         ax.set_ylim(y_lim)
         plt.gca().set_prop_cycle(None)
 
 
 
-    plt.xlabel("Error rate")
-    plt.ylabel("                                        Probability density")
+    plt.xlabel("$x$")
+    plt.ylabel("                                          Probability density, $g(x)$")
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
@@ -275,9 +275,32 @@ for example_idx in (0,1,2, 3):
 
 
     for i, array in enumerate(array_list):
-        cum_prob, error_rate_upper_bound = get_pareto_of_error_rate(array)
-        plt.plot(error_rate_upper_bound, cum_prob, label=f"Item {'A' if i==0 else 'B'}", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
-    plt.plot(np.minimum(get_pareto_of_error_rate(array_list[0])[1], get_pareto_of_error_rate(array_list[1])[1]), cum_prob, color='black', ls=":", linewidth =0.75, label="Pareto front")
+        cum_prob, error_rate_upper_bound = get_x_and_Gx_of_cumulative_distribuition(array)
+
+        # Make sure that both X_A and X_B have the same domain, and therefore, lengthen their domain to enforce this
+        cum_prob = np.concatenate((np.array([0]), cum_prob, np.array([1])), axis=0)
+        error_rate_upper_bound = np.concatenate((
+            np.array([min(min(array_list[0]),min(array_list[1]))]),
+            error_rate_upper_bound,
+            np.array([max(max(array_list[0]),max(array_list[1]))])
+        ), axis=0)
+
+        plt.plot(error_rate_upper_bound, cum_prob, label=f"$G_{'A' if i==0 else 'B'}(x)$", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
+
+    # get optimal cumulative distribution
+    cum_prob, error_rate_upper_bound = get_x_and_Gx_of_cumulative_distribuition(array_list[0])[0], np.minimum(get_x_and_Gx_of_cumulative_distribuition(array_list[0])[1], get_x_and_Gx_of_cumulative_distribuition(array_list[1])[1])
+
+    # Also need to lengthen the domain of the optimal cumulative distribution
+    cum_prob = np.concatenate((np.array([0]), cum_prob, np.array([1])), axis=0)
+    error_rate_upper_bound = np.concatenate((
+        np.array([min(min(array_list[0]),min(array_list[1]))]),
+        error_rate_upper_bound,
+        np.array([max(max(array_list[0]),max(array_list[1]))])
+    ), axis=0)
+
+
+
+    plt.plot(error_rate_upper_bound, cum_prob, color='black', ls=":", linewidth =0.75, label=r"$\max(G_A(x),G_B(x))$")
     left_xlim, right_xlim = plt.xlim()  # return the current xlim
     linewidth = 0.75
     plt.plot([left_xlim, right_xlim],[0.5,0.5], lw = linewidth, label=r"Median", ls="-")
@@ -286,9 +309,9 @@ for example_idx in (0,1,2, 3):
 
     plt.xlim((left_xlim, right_xlim))   # set the xlim to left, right
 
-    plt.xlabel(r"error, $x$")
-    plt.ylabel("$F_A(x)$ and $F_B(x)$")
-    plt.gca().invert_yaxis()
+    plt.xlabel(r"$x$")
+    plt.ylabel("$G_A(x)$ and $G_B(x)$")
+    #plt.gca().invert_yaxis()
     plt.legend()
     plt.tight_layout()
     plt.savefig(f'figures/example_{example_idx+1}_pareto.pdf')

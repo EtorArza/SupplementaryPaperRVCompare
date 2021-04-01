@@ -14,9 +14,36 @@ from keras import backend as K
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
+import sys
 
-RESULT_PATH = 'data/scores.csv'
+
 THREADS = 6
+
+
+def usage():
+    print("usage:\npython get_sample.py A")
+    exit(1)
+
+if len(sys.argv) != 2:
+    usage()
+
+
+if sys.argv[1] != "A" and sys.argv[1] != "B":
+    usage()
+
+
+x_suffix = sys.argv[1]
+if x_suffix == "A":
+    optimizer = "adam"
+elif x_suffix == "B":
+    optimizer = "RMSprop"
+
+
+
+
+
+RESULT_PATH = f'data/scores{x_suffix}.csv'
+
 
 
 def touch(fname):
@@ -121,7 +148,7 @@ while True:
     batch_size = 128
     epochs = 1
 
-    model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+    model.compile(loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"])
 
 
 

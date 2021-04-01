@@ -40,9 +40,9 @@ for i, ax in enumerate((ax1, ax2)):
 
     ax.hist(array, bins=n_bins_freedman_diaconis(array) // 20, density=True, rwidth=1.0, color='silver', edgecolor='silver')
 
-    props = dict(boxstyle='round', facecolor='white', alpha=0.25)
+    #props = dict(boxstyle='round', facecolor='white', alpha=0.25)
     #ax.text(0.95, 0.95, "$n = {:.0e}$".format(len(array)),  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
-    ax.text(0.95, 0.55, f"Item {'A' if i==0 else 'B'}",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
+    ax.text(0.95, 0.55, f"$X_{'A' if i==0 else 'B'}$",  color='black',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', )#bbox=props)
     ax.axvline(average, color = 'black', ls='--', lw = 0.85, label=r"Expected value")
     plt.xlabel("Error")
     plt.ylabel("                                        Probability density")
