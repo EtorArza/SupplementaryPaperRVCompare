@@ -3,7 +3,7 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 from include_in_html import *
 import pandas as pd
-
+from bokeh.models import Range1d
 import numpy as np
 
 from bokeh.io import curdoc
@@ -79,22 +79,27 @@ yb = ynormal2 * (1-tauparam) + ytau*tauparam
 
 x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middle of bins
 
+C_P_and_zeroes = ["Probability of X_A < X_B = 0.5"] * (len(x))
+C_D_and_zeroes = ["Dominance rate of X_A over X_B = 0.5"] * (len(x))
 
+source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes))
 
-source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist()))
-
-plot1_prob = figure()
+plot1_prob = figure(plot_width=400, plot_height=400)
 plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
 plot1_prob.line('x', 'yb', source=source, line_width=3, line_alpha=0.6)
 
-plot1_cum = figure()
+plot1_cum = figure(plot_width=400, plot_height=400)
 plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.6, color="orange")
 plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.6)
 
-plot1_values = figure()
-plot1_values.text(0, 0, text='color', text_color='text_color',
-        alpha=0.6667, text_font_size='48px', text_baseline='middle',
-        text_align='center', source=source)
+plot1_values = figure(plot_width=800, plot_height=100)
+plot1_values.axis.visible = False
+plot1_values.text(0, 0.501, text='C_P_and_zeroes', alpha=0.0085, text_font_size='20px', text_baseline='left', text_align='left', source=source)
+plot1_values.text(0, 0.499, text='C_D_and_zeroes', alpha=0.0085, text_font_size='20px', text_baseline='left', text_align='left', source=source)
+
+plot1_values.x_range=Range1d(0.00, 0.25)
+plot1_values.y_range=Range1d(0.4975, 0.5025)
+
 
 
 sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=x[1]-x[0], title="lambda", format="0[.]0000")
@@ -109,6 +114,11 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     var labdaImpliesIndexOfset = Math.round(lambdaparam.value / binsize);
     var indexAfterOffset = 0
 
+    var C_P_and_zeroes = data['C_P_and_zeroes']
+    var C_D_and_zeroes = data['C_D_and_zeroes']
+
+
+
 
     var yb = data['yb']
     var ybcum = data['ybcum']
@@ -119,13 +129,20 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
         cumprob = cumprob + yb[i] * binsize
         ybcum[i] = cumprob
     }
+
+    for (var i = 0; i < yb.length; i++) {
+        C_P_and_zeroes[i] = "Probability of X_A < X_B = " + tauparam.value.toString()
+        C_D_and_zeroes[i] = "Dominance rate of X_A over X_B = " + 0.79
+    }
+
+
     source.change.emit();
 """)
 
 sliderTauLocation.js_on_change('value', callback1)
 sliderTauSize.js_on_change('value', callback1)
 
-layout1 = column(sliderTauLocation, sliderTauSize, row(plot1_prob, plot1_cum))
+layout1 = column(sliderTauLocation, sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
 
 
 
