@@ -141,7 +141,7 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
         C_P = C_P + ya[i] * (1 - ybcum[i]) * binsize
     }
 
-    var EPSILON = 0.001
+    var EPSILON = 0.0001
     if ( Math.abs(lambdaparam.value) < EPSILON || tauparam.value < EPSILON )
     {
         C_D = 0.5
