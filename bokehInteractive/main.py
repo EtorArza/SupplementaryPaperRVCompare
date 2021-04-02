@@ -45,8 +45,13 @@ def process_html_into_includable_section(inputhtml):
     return html_to_be_included
 
 
-
-
+def disableBokehFigureInteraction(fig):
+    fig.toolbar.active_drag = None
+    fig.toolbar.active_scroll = None
+    fig.toolbar.active_tap = None
+    fig.toolbar.logo = None
+    fig.toolbar_location = None
+  
 print("-------------")
 print("EXAMPLE: show that properties prop:scale_of_portions and prop:prop:bounds_with_interpretation are incompatible ")
 print("-------------")
@@ -141,6 +146,10 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
 
 sliderTauLocation.js_on_change('value', callback1)
 sliderTauSize.js_on_change('value', callback1)
+
+disableBokehFigureInteraction(plot1_values)
+disableBokehFigureInteraction(plot1_prob)
+disableBokehFigureInteraction(plot1_cum)
 
 layout1 = column(sliderTauLocation, sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
 
