@@ -86,8 +86,9 @@ x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middl
 
 C_P_and_zeroes = ["Probability of X_A < X_B = 0.5"] * (len(x))
 C_D_and_zeroes = ["Dominance rate of X_A over X_B = 0.5"] * (len(x))
+dominance_and_zeros = ["X_A ~ X_B"] * (len(x))
 
-source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes))
+source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes, dominance_and_zeros=dominance_and_zeros))
 
 plot1_prob = figure(plot_width=400, plot_height=400, title="Probability denstiy",)
 plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.5, color="orange", legend_label="X_A")
@@ -97,13 +98,14 @@ plot1_cum = figure(plot_width=400, plot_height=400, title="Cumulative distributi
 plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.5, color="orange")
 plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.5)
 
-plot1_values = figure(plot_width=800, plot_height=100)
+plot1_values = figure(plot_width=800, plot_height=150)
 plot1_values.axis.visible = False
-plot1_values.text(0, 0.501, text='C_P_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
-plot1_values.text(0, 0.499, text='C_D_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
+plot1_values.text(0, 0.501, text='dominance_and_zeros', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
+plot1_values.text(0, 0.499, text='C_P_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
+plot1_values.text(0, 0.497, text='C_D_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
 
 plot1_values.x_range=Range1d(0.00, 0.25)
-plot1_values.y_range=Range1d(0.4975, 0.5025)
+plot1_values.y_range=Range1d(0.495, 0.5025)
 
 
 
@@ -121,6 +123,7 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
 
     var C_P_and_zeroes = data['C_P_and_zeroes']
     var C_D_and_zeroes = data['C_D_and_zeroes']
+    var dominance_and_zeros = data['dominance_and_zeros']
 
 
 
@@ -145,15 +148,28 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     if ( Math.abs(lambdaparam.value) < EPSILON || tauparam.value < EPSILON )
     {
         C_D = 0.5
+        dominance_and_zeros[0] = "X_A ~ X_B"
     }
     else
     {
         C_D = (Math.sign(lambdaparam.value) + 1) / 2
+
+        if(C_D > 1 - EPSILON)
+        {
+            dominance_and_zeros[0] = "X_A ≻ X_B"
+        }
+
+        if(C_D < EPSILON)
+        {
+            dominance_and_zeros[0] = "X_B ≻ X_A"
+        }
+
     }
 
     for (var i = 0; i < yb.length; i++) {
         C_P_and_zeroes[i] = "Probability of X_A < X_B = " + C_P.toFixed(2).toString()
         C_D_and_zeroes[i] = "Dominance rate of X_A over X_B = " + C_D.toFixed(2).toString()
+        dominance_and_zeros[i] = dominance_and_zeros[0]
     }
 
 
