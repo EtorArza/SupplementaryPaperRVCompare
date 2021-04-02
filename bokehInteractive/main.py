@@ -70,8 +70,8 @@ binsize = (x_range[1] - x_range[0]) / (nbins - 1)
 print(binsize)
 
 normal1 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
-normal2 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
-normaltau = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
+normal2 = normal1[:]   #np.random.normal(loc = 0.05, scale = 0.0025, size = n)
+normaltau = normal1[:] #np.random.normal(loc = 0.05, scale = 0.0025, size = n)
 
 
 ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
@@ -89,25 +89,25 @@ C_D_and_zeroes = ["Dominance rate of X_A over X_B = 0.5"] * (len(x))
 
 source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes))
 
-plot1_prob = figure(plot_width=400, plot_height=400)
-plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.6, color="orange")
-plot1_prob.line('x', 'yb', source=source, line_width=3, line_alpha=0.6)
+plot1_prob = figure(plot_width=400, plot_height=400, title="Probability denstiy",)
+plot1_prob.line('x', 'ya', source=source, line_width=3, line_alpha=0.5, color="orange", legend_label="X_A")
+plot1_prob.line('x', 'yb', source=source, line_width=3, line_alpha=0.5, legend_label="X_B")
 
-plot1_cum = figure(plot_width=400, plot_height=400)
-plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.6, color="orange")
-plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.6)
+plot1_cum = figure(plot_width=400, plot_height=400, title="Cumulative distribution",)
+plot1_cum.line('x', 'yacum', source=source, line_width=3, line_alpha=0.5, color="orange")
+plot1_cum.line('x', 'ybcum', source=source, line_width=3, line_alpha=0.5)
 
 plot1_values = figure(plot_width=800, plot_height=100)
 plot1_values.axis.visible = False
-plot1_values.text(0, 0.501, text='C_P_and_zeroes', alpha=0.0085, text_font_size='20px', text_baseline='left', text_align='left', source=source)
-plot1_values.text(0, 0.499, text='C_D_and_zeroes', alpha=0.0085, text_font_size='20px', text_baseline='left', text_align='left', source=source)
+plot1_values.text(0, 0.501, text='C_P_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
+plot1_values.text(0, 0.499, text='C_D_and_zeroes', alpha=0.0085, text_font_size='20px',  text_align='left', source=source)
 
 plot1_values.x_range=Range1d(0.00, 0.25)
 plot1_values.y_range=Range1d(0.4975, 0.5025)
 
 
 
-sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=x[1]-x[0], title="lambda", format="0[.]0000")
+sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=0.001, title="lambda", format="0[.]000")
 sliderTauSize = Slider(start=0.0, end=0.2, value=tauparam, step=.01, title="tau")
 
 callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdaparam=sliderTauLocation), code="""
@@ -124,10 +124,12 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
 
 
 
-
+    var ya = data['ya']
     var yb = data['yb']
     var ybcum = data['ybcum']
     var cumprob = 0
+    var C_P =  0
+    var C_D = 0
     for (var i = 0; i < yb.length; i++) {
         indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
         yb[i] = ynormal2[i] * (1 - tauparam.value) + ytau[indexAfterOffset] * tauparam.value
@@ -136,8 +138,22 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     }
 
     for (var i = 0; i < yb.length; i++) {
-        C_P_and_zeroes[i] = "Probability of X_A < X_B = " + tauparam.value.toString()
-        C_D_and_zeroes[i] = "Dominance rate of X_A over X_B = " + 0.79
+        C_P = C_P + ya[i] * (1 - ybcum[i]) * binsize
+    }
+
+    var EPSILON = 0.001
+    if ( Math.abs(lambdaparam.value) < EPSILON || tauparam.value < EPSILON )
+    {
+        C_D = 0.5
+    }
+    else
+    {
+        C_D = (Math.sign(lambdaparam.value) + 1) / 2
+    }
+
+    for (var i = 0; i < yb.length; i++) {
+        C_P_and_zeroes[i] = "Probability of X_A < X_B = " + C_P.toFixed(2).toString()
+        C_D_and_zeroes[i] = "Dominance rate of X_A over X_B = " + C_D.toFixed(2).toString()
     }
 
 
