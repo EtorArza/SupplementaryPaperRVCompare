@@ -191,9 +191,9 @@ include_in_html(process_html_into_includable_section(file_html(layout1, CDN, "my
 
 
 
-plot2 = figure()
-plot2.circle([1,2], [3,4])
-plot2.plot_height = 400
-plot2.plot_width = 400
+# plot2 = figure()
+# plot2.circle([1,2], [3,4])
+# plot2.plot_height = 400
+# plot2.plot_width = 400
 
-include_in_html(process_html_into_includable_section(file_html(plot2, CDN, "my plot")), "test2", html_filepath)
+# include_in_html(process_html_into_includable_section(file_html(plot2, CDN, "my plot")), "test2", html_filepath)
