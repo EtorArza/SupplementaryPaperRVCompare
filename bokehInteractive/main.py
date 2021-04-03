@@ -69,9 +69,10 @@ binsize = (x_range[1] - x_range[0]) / nbins
 
 print(binsize)
 
+np.random.seed(8)
 normal1 = np.random.normal(loc = 0.05, scale = 0.0015, size = n)
 normal2 = np.random.normal(loc = 0.05025, scale = 0.0015, size = n)
-normaltau = np.random.normal(loc = 0.05025, scale = 0.0015, size = n)
+normaltau = np.random.normal(loc = 0.04525, scale = 0.0015, size = n)
 
 
 ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
@@ -84,9 +85,9 @@ yb = ynormal2 * (1-tauparam) + ytau*tauparam
 
 x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middle of bins
 
-C_P_and_zeroes = ["Probability of X_A < X_B = 0.55"] * (len(x))
-C_D_and_zeroes = ["Dominance rate of X_A over X_B = 1.0"] * (len(x))
-dominance_and_zeros = ["X_A ≻ X_B"] * (len(x))
+dominance_and_zeros = ["X_A ~ X_B"] * (len(x))
+C_P_and_zeroes = ["Probability of X_A < X_B = 0.49"] * (len(x))
+C_D_and_zeroes = ["Dominance rate of X_A over X_B = 0.58"] * (len(x))
 
 source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes, dominance_and_zeros=dominance_and_zeros))
 
@@ -109,17 +110,14 @@ plot1_values.y_range=Range1d(0.495, 0.5025)
 
 
 
-sliderLambda = Slider(start=-0.005, end=0.01, value=lambdaparam, step=0.001, title="λ", format="0[.]000")
 sliderTauSize = Slider(start=0.0, end=0.6, value=tauparam, step=.01, title="τ")
 
-callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdaparam=sliderLambda), code="""
+callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize), code="""
     var data = source.data;
     var ynormal2 = data['ynormal2']
     var ytau = data['ytau']
     var binsize = 0.00001501
 
-    var labdaImpliesIndexOfset = Math.round(lambdaparam.value / binsize);
-    var indexAfterOffset = 0
 
     var C_P_and_zeroes = data['C_P_and_zeroes']
     var C_D_and_zeroes = data['C_D_and_zeroes']
@@ -135,8 +133,7 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     var C_P =  0
     var C_D = 0
     for (var i = 0; i < yb.length; i++) {
-        indexAfterOffset = Math.min(Math.max(0, i + labdaImpliesIndexOfset), yb.length-1)
-        yb[i] = ynormal2[i] * (1 - tauparam.value) + ytau[indexAfterOffset] * tauparam.value
+        yb[i] = ynormal2[i] * (1 - tauparam.value) + ytau[i] * tauparam.value
         cumprob = cumprob + yb[i] * binsize
         ybcum[i] = cumprob
     }
@@ -187,14 +184,13 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     source.change.emit();
 """)
 
-sliderLambda.js_on_change('value', callback1)
 sliderTauSize.js_on_change('value', callback1)
 
 disableBokehFigureInteraction(plot1_values)
 disableBokehFigureInteraction(plot1_prob)
 disableBokehFigureInteraction(plot1_cum)
 
-layout1 = column(sliderLambda, sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
+layout1 = column(sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
 
 
 
