@@ -56,7 +56,7 @@ print("-------------")
 print("EXAMPLE: show that properties prop:scale_of_portions and prop:prop:bounds_with_interpretation are incompatible ")
 print("-------------")
 
-x_range = (0.03,0.07)
+x_range = (0.03,0.06)
 
 
 n = 10000000
@@ -65,13 +65,13 @@ nbins = 2000
 tauparam = 0.1
 lambdaparam = 0
 
-binsize = (x_range[1] - x_range[0]) / (nbins - 1)
+binsize = (x_range[1] - x_range[0]) / nbins
 
 print(binsize)
 
-normal1 = np.random.normal(loc = 0.05, scale = 0.0025, size = n)
-normal2 = normal1[:]   #np.random.normal(loc = 0.05, scale = 0.0025, size = n)
-normaltau = normal1[:] #np.random.normal(loc = 0.05, scale = 0.0025, size = n)
+normal1 = np.random.normal(loc = 0.05, scale = 0.0015, size = n)
+normal2 = np.random.normal(loc = 0.05025, scale = 0.0015, size = n)
+normaltau = np.random.normal(loc = 0.05025, scale = 0.0015, size = n)
 
 
 ynormal1, xnormal1 = np.histogram(normal1, density=True, range=x_range, bins=nbins)
@@ -84,9 +84,9 @@ yb = ynormal2 * (1-tauparam) + ytau*tauparam
 
 x = xnormal1[:-1] + (xnormal1[1] - xnormal1[0]) / 2 # plot position in the middle of bins
 
-C_P_and_zeroes = ["Probability of X_A < X_B = 0.5"] * (len(x))
-C_D_and_zeroes = ["Dominance rate of X_A over X_B = 0.5"] * (len(x))
-dominance_and_zeros = ["X_A ~ X_B"] * (len(x))
+C_P_and_zeroes = ["Probability of X_A < X_B = 0.55"] * (len(x))
+C_D_and_zeroes = ["Dominance rate of X_A over X_B = 1.0"] * (len(x))
+dominance_and_zeros = ["X_A ≻ X_B"] * (len(x))
 
 source = ColumnDataSource(data=dict(x=x.tolist(), ya=ya, yb=yb, yacum=(ya.cumsum()*binsize).tolist(), ybcum=(yb.cumsum()*binsize).tolist(), ynormal1=ynormal1.tolist(), ynormal2=ynormal2.tolist(), ytau=ytau.tolist(), C_P_and_zeroes=C_P_and_zeroes, C_D_and_zeroes=C_D_and_zeroes, dominance_and_zeros=dominance_and_zeros))
 
@@ -109,14 +109,14 @@ plot1_values.y_range=Range1d(0.495, 0.5025)
 
 
 
-sliderTauLocation = Slider(start=-0.01, end=0.01, value=lambdaparam, step=0.001, title="lambda", format="0[.]000")
-sliderTauSize = Slider(start=0.0, end=0.2, value=tauparam, step=.01, title="tau")
+sliderLambda = Slider(start=-0.005, end=0.01, value=lambdaparam, step=0.001, title="λ", format="0[.]000")
+sliderTauSize = Slider(start=0.0, end=0.6, value=tauparam, step=.01, title="τ")
 
-callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdaparam=sliderTauLocation), code="""
+callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdaparam=sliderLambda), code="""
     var data = source.data;
     var ynormal2 = data['ynormal2']
     var ytau = data['ytau']
-    var binsize = 0.00002001
+    var binsize = 0.00001501
 
     var labdaImpliesIndexOfset = Math.round(lambdaparam.value / binsize);
     var indexAfterOffset = 0
@@ -130,6 +130,7 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     var ya = data['ya']
     var yb = data['yb']
     var ybcum = data['ybcum']
+    var yacum = data['yacum']
     var cumprob = 0
     var C_P =  0
     var C_D = 0
@@ -144,27 +145,37 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
         C_P = C_P + ya[i] * (1 - ybcum[i]) * binsize
     }
 
-    var EPSILON = 0.0001
-    if ( Math.abs(lambdaparam.value) < EPSILON || tauparam.value < EPSILON )
+    var EPSILON = 0.01
+
+    C_D = 0
+
+    for (var i = 0; i < yb.length; i++) {
+        if(yacum[i] > ybcum[i])
+        {
+            C_D = C_D + ya[i] * binsize
+        }else
+        {
+            C_D = C_D - yb[i] * binsize
+        }
+    }
+
+    C_D = (C_D + 1) / 2
+    C_D = Math.min(Math.max(0.0, C_D), 1.0)
+
+    if(C_D > 1 - EPSILON)
     {
-        C_D = 0.5
-        dominance_and_zeros[0] = "X_A ~ X_B"
+        dominance_and_zeros[0] = "X_A ≻ X_B"
+    }
+
+    else if(C_D < EPSILON)
+    {
+        dominance_and_zeros[0] = "X_B ≻ X_A"
     }
     else
     {
-        C_D = (Math.sign(lambdaparam.value) + 1) / 2
-
-        if(C_D > 1 - EPSILON)
-        {
-            dominance_and_zeros[0] = "X_A ≻ X_B"
-        }
-
-        if(C_D < EPSILON)
-        {
-            dominance_and_zeros[0] = "X_B ≻ X_A"
-        }
-
+        dominance_and_zeros[0] = "X_A ~ X_B"
     }
+
 
     for (var i = 0; i < yb.length; i++) {
         C_P_and_zeroes[i] = "Probability of X_A < X_B = " + C_P.toFixed(2).toString()
@@ -176,14 +187,14 @@ callback1 = CustomJS(args=dict(source=source, tauparam=sliderTauSize, lambdapara
     source.change.emit();
 """)
 
-sliderTauLocation.js_on_change('value', callback1)
+sliderLambda.js_on_change('value', callback1)
 sliderTauSize.js_on_change('value', callback1)
 
 disableBokehFigureInteraction(plot1_values)
 disableBokehFigureInteraction(plot1_prob)
 disableBokehFigureInteraction(plot1_cum)
 
-layout1 = column(sliderTauLocation, sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
+layout1 = column(sliderLambda, sliderTauSize, plot1_values, row(plot1_prob, plot1_cum))
 
 
 
