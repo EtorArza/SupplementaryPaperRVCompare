@@ -8,6 +8,14 @@ from tqdm import tqdm as tqdm
 import math
 from decimal import *
 
+# "--- Example 1 ---"
+# estimated Cd =  0.618370116120446
+# "--- Example 2 ---"
+# estimated Cd =  0.719603383576358
+# "--- Example 3 ---"
+# estimated Cd =  0.586496322178725
+# "--- Example 4 ---"
+# estimated Cd =  0.507432634261749
 
 matplotlib.rcParams['mathtext.fontset'] = 'custom'
 matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
@@ -19,6 +27,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 target_error = 5e-5
 COMPUTE_PROB = True
+N_OF_SAMPLES = 200
 
 # https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
 def n_bins_freedman_diaconis(array_x):
@@ -203,7 +212,7 @@ for example_idx in (0,1,2, 3):
             if i == 0: #Classifier A
                 df = pd.DataFrame(np.append(np.random.normal(loc = 0.021, scale = 0.002, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0)))+0.0005- 0.000175 + 0.19)
             else: #Classifier B
-                df = pd.DataFrame(abs(np.append(np.random.normal(loc = 0.02-0.00125, scale = 0.002, size = int(n*0.925)),np.random.normal(loc = -0.15-0.00125, scale = 0.0071, size = int(n*0.075))) + 0.20))
+                df = pd.DataFrame(abs(np.append(np.random.normal(loc = 0.02-0.00125, scale = 0.002, size = int(n*0.925)),np.random.normal(loc = -0.15-0.00125, scale = 0.002, size = int(n*0.075))) + 0.20))
         
         elif example_idx == 2:
             bin_length = 0.0004
@@ -273,6 +282,8 @@ for example_idx in (0,1,2, 3):
         # print("TotalVariation-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(0.5) * abs(x-Decimal(1)), nbins=nbins))
         # print("Helligner-dist: ", math.sqrt(f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) - Decimal(2)*(x.sqrt()) + Decimal(1), nbins=nbins))) # x - 2*math.sqrt(x) + 1 = (1 + sqrt x)^2
 
+    samples = pd.DataFrame(np.transpose(np.array(array_list)), columns=["X_A", "X_B"]).sample(N_OF_SAMPLES)
+    samples.to_csv(f"data/generated_data/samples_example_{example_idx+1}.csv", index=False)
 
     for i, array in enumerate(array_list):
         cum_prob, error_rate_upper_bound = get_x_and_Gx_of_cumulative_distribuition(array)
