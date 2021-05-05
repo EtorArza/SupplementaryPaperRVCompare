@@ -282,9 +282,6 @@ for example_idx in (0,1,2, 3):
         # print("TotalVariation-div: ", f_divergence(array_list[0], array_list[1], lambda x: Decimal(0.5) * abs(x-Decimal(1)), nbins=nbins))
         # print("Helligner-dist: ", math.sqrt(f_divergence(array_list[0], array_list[1], lambda x: Decimal(x) - Decimal(2)*(x.sqrt()) + Decimal(1), nbins=nbins))) # x - 2*math.sqrt(x) + 1 = (1 + sqrt x)^2
 
-    samples = pd.DataFrame(np.transpose(np.array(array_list)), columns=["X_A", "X_B"]).sample(N_OF_SAMPLES)
-    samples.to_csv(f"data/generated_data/samples_example_{example_idx+1}.csv", index=False)
-
     for i, array in enumerate(array_list):
         cum_prob, error_rate_upper_bound = get_x_and_Gx_of_cumulative_distribuition(array)
 
