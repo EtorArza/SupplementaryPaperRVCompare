@@ -307,8 +307,8 @@ for example_idx in (0,1,2, 3):
     ), axis=0)
 
 
-
-    plt.plot(error_rate_upper_bound, cum_prob, color='black', ls=":", linewidth =0.75, label=r"$\max(G_A(x),G_B(x))$")
+    # # Get the pareto front
+    # plt.plot(error_rate_upper_bound, cum_prob, color='black', ls=":", linewidth =0.75, label=r"$\max(G_A(x),G_B(x))$")
     left_xlim, right_xlim = plt.xlim()  # return the current xlim
     linewidth = 0.75
     plt.plot([left_xlim, right_xlim],[0.5,0.5], lw = linewidth, label=r"Median", ls="-")
