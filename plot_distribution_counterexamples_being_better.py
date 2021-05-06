@@ -22,6 +22,8 @@ def n_bins_freedman_diaconis(array_x):
 
 
 fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=True)
+fig.set_size_inches(4, 3)      
+
 
 for i, ax in enumerate((ax1, ax2)):
 
@@ -40,16 +42,17 @@ for i, ax in enumerate((ax1, ax2)):
 
     ax.hist(array, bins=n_bins_freedman_diaconis(array) // 20, density=True, rwidth=1.0, color='silver', edgecolor='silver')
 
+
     #props = dict(boxstyle='round', facecolor='white', alpha=0.25)
     #ax.text(0.95, 0.95, "$n = {:.0e}$".format(len(array)),  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
     ax.text(0.95, 0.55, f"$X_{'A' if i==0 else 'B'}$",  color='black',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', )#bbox=props)
     ax.axvline(average, color = 'black', ls='--', lw = 0.85, label=r"Expected value")
-    plt.xlabel("Error")
-    plt.ylabel("                                        Probability density")
+    plt.xlabel("x")
+    plt.ylabel("                          Probability density")
 
-ax1.legend(bbox_to_anchor=(0.75, 1.25), loc='upper left')
+ax1.legend(bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3)
 
-
+plt.tight_layout()
 plt.savefig('figures/counterexample_being_better_dist.pdf')
 plt.savefig('../paper/images/counterexample_being_better_dist.pdf')
 
