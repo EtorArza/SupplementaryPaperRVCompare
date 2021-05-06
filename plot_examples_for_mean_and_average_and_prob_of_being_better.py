@@ -26,8 +26,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
 target_error = 5e-5
-COMPUTE_PROB = True
-N_OF_SAMPLES = 200
+COMPUTE_PROB = False
 
 # https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
 def n_bins_freedman_diaconis(array_x):
@@ -205,22 +204,21 @@ for example_idx in (0,1,2, 3):
             if i == 0: #Classifier A
                 df = pd.DataFrame(np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.45)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.47))))
             else: #Classifier B
-                df = pd.DataFrame(np.append(np.random.normal(loc = 0.05, scale = 0.00125, size = int(n*0.47)),np.random.normal(loc =0.07, scale = 0.00125, size = int(n*0.45))))+0.01
+                df = pd.DataFrame(np.append(np.random.normal(loc = 0.06, scale = 0.00125, size = int(n*0.47)),np.random.normal(loc =0.08, scale = 0.00125, size = int(n*0.45))))
 
         elif example_idx == 1:
             bin_length = 0.00005
             if i == 0: #Classifier A
-                df = pd.DataFrame(np.append(np.random.normal(loc = 0.021, scale = 0.002, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0)))+0.0005- 0.000175 + 0.19)
+                df = pd.DataFrame(np.random.normal(loc = 0.211325, scale = 0.002, size = n))
             else: #Classifier B
-                df = pd.DataFrame(abs(np.append(np.random.normal(loc = 0.02-0.00125, scale = 0.002, size = int(n*0.925)),np.random.normal(loc = -0.15-0.00125, scale = 0.002, size = int(n*0.075))) + 0.20))
+                df = pd.DataFrame(abs(np.append(np.random.normal(loc = 0.21875, scale = 0.002, size = int(n*0.925)),np.random.normal(loc = 0.04875, scale = 0.002, size = int(n*0.075)))))
         
         elif example_idx == 2:
             bin_length = 0.0004
             if i == 0: #Classifier A
-                df = pd.DataFrame(np.append(np.random.normal(loc = 0.20, scale = 0.05, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0))) + 0.1)
+                df = pd.DataFrame(np.random.normal(loc = 0.30, scale = 0.05, size = n))
             else: #Classifier B
-                df = pd.DataFrame(np.append(np.random.normal(loc = 0.20, scale = 0.05, size = int(n*1)),np.random.normal(loc =0.01, scale = 0.0025, size = int(n*0))) + 0.12)
-
+                df = pd.DataFrame(np.random.normal(loc = 0.32, scale = 0.05, size = n))
 
         elif example_idx == 3:
             bin_length = 0.0004
@@ -318,9 +316,14 @@ for example_idx in (0,1,2, 3):
     plt.xlim((left_xlim, right_xlim))   # set the xlim to left, right
 
     plt.xlabel(r"$x$")
-    plt.ylabel("$G_A(x)$ and $G_B(x)$")
+    plt.ylabel("cumulative probablity")
     #plt.gca().invert_yaxis()
-    plt.legend()
+    fig = matplotlib.pyplot.gcf()
+    if example_idx==0:
+        plt.legend(bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3)
+        fig.set_size_inches(4, 2.5)
+    else:
+        fig.set_size_inches(4, 1.9)      
     plt.tight_layout()
     plt.savefig(f'figures/example_{example_idx+1}_pareto.pdf')
     plt.savefig(f'../paper/images/example_{example_idx+1}_pareto.pdf')
