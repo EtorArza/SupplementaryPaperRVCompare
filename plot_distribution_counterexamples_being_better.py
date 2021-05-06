@@ -3,6 +3,14 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy import stats 
 
+# matplotlib.rcParams['mathtext.fontset'] = 'custom'
+# matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
+# matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
+# matplotlib.rcParams['mathtext.bf'] = 'Bitstream Vera Sans:bold'
+# matplotlib.rcParams['mathtext.fontset'] = 'stix'
+# matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
+
 
 # https://en.wikipedia.org/wiki/Freedman%E2%80%93Diaconis_rule
 def n_bins_freedman_diaconis(array_x):

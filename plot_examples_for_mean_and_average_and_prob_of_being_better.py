@@ -17,12 +17,12 @@ from decimal import *
 # "--- Example 4 ---"
 # estimated Cd =  0.507432634261749
 
-matplotlib.rcParams['mathtext.fontset'] = 'custom'
-matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
-matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
-matplotlib.rcParams['mathtext.bf'] = 'Bitstream Vera Sans:bold'
-matplotlib.rcParams['mathtext.fontset'] = 'stix'
-matplotlib.rcParams['font.family'] = 'STIXGeneral'
+# matplotlib.rcParams['mathtext.fontset'] = 'custom'
+# matplotlib.rcParams['mathtext.rm'] = 'Bitstream Vera Sans'
+# matplotlib.rcParams['mathtext.it'] = 'Bitstream Vera Sans:italic'
+# matplotlib.rcParams['mathtext.bf'] = 'Bitstream Vera Sans:bold'
+# matplotlib.rcParams['mathtext.fontset'] = 'stix'
+# matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
 target_error = 5e-5
@@ -192,6 +192,8 @@ for example_idx in (0,1,2, 3):
     print("EXAMPLE",example_idx+1)
     print("-------------")
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=True)
+    fig.set_size_inches(4, 3)      
+
     avgs = []
     medians = []
     array_list = []
@@ -249,19 +251,19 @@ for example_idx in (0,1,2, 3):
     for i, ax in enumerate((ax1, ax2)):
         y_lim = max(ax1.get_ylim(),ax2.get_ylim())
         linewidth = 0.75
-        ax.plot([avgs[i]]*n_steps_line,np.linspace(0,y_lim, n_steps_line),  marker="x", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Expected value (Average)", color = 'black')
-        ax.plot([medians[i]]*n_steps_line,np.linspace(0,y_lim,n_steps_line),  marker="s", fillstyle="none", markersize = 5, markeredgewidth = linewidth, lw = linewidth, label=r"Median", color = 'black')
+        ax.plot([avgs[i]]*n_steps_line,np.linspace(0,y_lim, n_steps_line),   ls='--', fillstyle="none", lw = linewidth, label=r"Expected value", color = 'black')
+        ax.plot([medians[i]]*n_steps_line,np.linspace(0,y_lim,n_steps_line),  ls='-', fillstyle="none", lw = linewidth, label=r"Median", color = 'black')
         ax.set_ylim(y_lim)
         plt.gca().set_prop_cycle(None)
 
 
 
     plt.xlabel("$x$")
-    plt.ylabel("                                          Probability density, $g(x)$")
+    plt.ylabel("                                Probability density")
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
-    ax1.legend(by_label.values(), by_label.keys(),bbox_to_anchor=(0.6, 1.3725), loc='upper left', framealpha=1.0, )
+    ax1.legend(by_label.values(), by_label.keys(),bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3, framealpha=1.0, )
 
     plt.tight_layout()
     plt.savefig(f'figures/example_{example_idx+1}_mean_median_prob_better.pdf')
