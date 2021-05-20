@@ -10,7 +10,7 @@ from sklearn.neighbors import KernelDensity
 # plot distribution of X_A, X_B
 
 fig, ax = plt.subplots(1, 1)
-fig.set_size_inches(6, 2)
+fig.set_size_inches(5, 2)
 
 
 x_min = 1e20
@@ -60,7 +60,8 @@ ax.text(0.95, 0.95, "Kernel size",  color='grey',  transform=ax.transAxes,  vert
 print(np.array([band_width/2]) + x_min + 0.9 * (x_max - x_min))
 ax.plot(np.array([-band_width/2,-band_width/2,-band_width/2,band_width/2,band_width/2,band_width/2]) + x_min + 0.91 * (x_max - x_min), np.array([y_max*0.81, y_max*0.79, y_max*0.80, y_max*0.80, y_max*0.81,y_max*0.79]), color = 'grey', lw=1.5)
 
-
+plt.tight_layout()
+plt.subplots_adjust(left=0.12)
 
 plt.xlabel("error rate in the test set")
 plt.ylabel("Probability density")

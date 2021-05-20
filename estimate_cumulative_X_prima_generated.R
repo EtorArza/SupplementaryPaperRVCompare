@@ -77,7 +77,7 @@ densityPlot = ggplot2::ggplot() +
     geom_line(data=dfPlot,
               aes(x=x, y=densityB, colour = "X_B", linetype="X_B")) +
 
-    ggplot2::scale_colour_manual("", breaks = c("X_A", "X_B"),  values = c("#00BFC4", "#F8766D")) +
+    ggplot2::scale_colour_manual("", breaks = c("X_A", "X_B"),  values = c("#1f77b4", "#ff7f0e")) +
     ggplot2::scale_linetype_manual("", breaks = c("X_A", "X_B"), values = c("solid", "dashed")) +
 
     ggplot2::xlab('x') +
@@ -92,7 +92,7 @@ cumulativePlot = ggplot2::ggplot() +
               aes(x=x, y=cumulativeA, colour = "X_A", linetype="X_A")) +
     geom_line(data=dfPlot,
               aes(x=x, y=cumulativeB, colour = "X_B", linetype="X_B")) +
-    ggplot2::scale_colour_manual("", breaks = c("X_A", "X_B"),  values = c("#00BFC4", "#F8766D")) +
+    ggplot2::scale_colour_manual("", breaks = c("X_A", "X_B"),  values = c("#1f77b4", "#ff7f0e")) +
     ggplot2::scale_linetype_manual("", breaks = c("X_A", "X_B"), values = c("solid", "dashed")) +
 
     ggplot2::xlab('x') +
@@ -103,8 +103,8 @@ ggsave(resultPath, plot=cumulativePlot, device="pdf", width = 4, height = 3, )
 
 
 
-
   fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, plotDifference = FALSE)
+  fig <- fig + scale_colour_manual("", breaks = c("X'_A", "X'_B"), values = c("X'_A"="#1f77b4", "X'_B"="#ff7f0e"))
   ggsave(paste(figsave_dir, "Example", i,"_xprimaAB.pdf", sep=""), plot=fig, width = 4, height = 3, device="pdf")
   fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, plotDifference = TRUE)
   ggsave(paste(figsave_dir, "Example", i,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")

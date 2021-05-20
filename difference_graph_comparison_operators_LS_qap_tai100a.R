@@ -19,7 +19,7 @@ dataHist <- data.frame(
 # Histogram
 fig <- ggplot(data=dataHist, aes(x=value, fill=type)) +
   geom_histogram(alpha=0.65, position = 'identity') +
-  scale_fill_manual(values=c("#ff7b00", "#327cc7")) +
+  scale_fill_manual(values=c("#1f77b4", "#ff7f0e")) +
   ggplot2::xlab('objective value') +
   ggplot2::ylab('count') +
   ggplot2::theme_minimal() +
