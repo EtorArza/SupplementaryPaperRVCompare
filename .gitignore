@@ -4,3 +4,6 @@
 .vscode*
 .Rproj.user
 .Rhistory
+*.o
+PlackettLuceEDA
+gradientSearch
