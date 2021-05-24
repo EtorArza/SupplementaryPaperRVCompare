@@ -4,6 +4,6 @@
 #include "utils.h"
 #include "LopInstance.h"
 
-int gradientAscent(LopInstance& lop, ldouble alpha, int lambda, int maxIterations=10000, string utilityFunction="superlinear", int printInterval=0, unsigned int seed=1);
+int gradientAscent(LopInstance& lop, ldouble alpha, int lambda, int maxEvaluations, string utilityFunction="superlinear", unsigned int seed=1);
 
 #endif

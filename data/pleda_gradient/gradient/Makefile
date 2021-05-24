@@ -7,9 +7,13 @@ LFLAGS = -L"/usr/lib"
 LIBS = -lm
 
 all: main
+#all: test
 
 clean:
 	rm *.o gradientSearch test
+
+zip:
+	zip -r gradientSearch.zip *.cpp *.c *.h Makefile instances/*
 
 SFMT.o: SFMT.c SFMT.h SFMT-common.h SFMT-params.h SFMT-params19937.h
 	$(CC) -O3 -finline-functions -fomit-frame-pointer -DNDEBUG -fno-strict-aliasing --param max-inline-insns-single=1800 -Wmissing-prototypes -Wall -std=c99 -DSFMT_MEXP=19937 -c SFMT.c

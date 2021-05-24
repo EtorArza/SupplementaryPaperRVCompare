@@ -16,7 +16,7 @@ do
     do
     echo "$ins - $s"
     ./data/pleda_gradient/gradient/gradientSearch ${ins}
-    ./data/pleda_gradient/PLEDA/PlackettLuceEDA -i ${ins} -s ${s} 
+    #./data/pleda_gradient/PLEDA/PlackettLuceEDA -i ${ins} -s ${s} 
     done
 done
 
