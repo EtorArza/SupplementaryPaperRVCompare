@@ -7,11 +7,10 @@ P_VALUE_REJECTED_IF_LOWER_THAN <- 0.005
 
 
  # define distributions
-w1 <- 45 / (45 + 47)
-w2 <- 47 / (45 + 47)
-densityA <- mixtureDensity(c(normalDensity(0.05,0.00125), normalDensity(0.07, 0.00125)), weights = c(w1, w2))
-densityB <- mixtureDensity(c(normalDensity(0.06,0.00125), normalDensity(0.08, 0.00125)), weights = c(w2, w1))
-xlims <- c(0.04, 0.09)
+densityA <- normalDensity(0.211325,0.002)
+densityB <- mixtureDensity(c(normalDensity(0.21875,0.002), normalDensity(0.04875, 0.002)), weights = c(0.925, 0.075))
+xlims <- c(0.0, 0.3)
+
 
 # plot cdf
 x <- seq(xlims[1], xlims[2], length.out=201)
