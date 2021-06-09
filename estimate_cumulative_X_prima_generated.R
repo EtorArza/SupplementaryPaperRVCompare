@@ -1,7 +1,7 @@
 library("RVCompare")
 figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
 
-for (i in 1:4) {
+for (i in 2:4) {
   print(paste("--- Example", toString(i), "---"))
 
   nSamples <- 400
@@ -104,7 +104,7 @@ ggsave(resultPath, plot=cumulativePlot, device="pdf", width = 4, height = 3, )
 
 
   fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, plotDifference = FALSE)
-  fig <- fig + scale_colour_manual("", breaks = c("X'_A", "X'_B"), values = c("X'_A"="#1f77b4", "X'_B"="#ff7f0e"))
+  fig <- fig + scale_colour_manual("", breaks = c("X_A", "X_B"), values = c("X_A"="#1f77b4", "X_B"="#ff7f0e"))
   ggsave(paste(figsave_dir, "Example", i,"_xprimaAB.pdf", sep=""), plot=fig, width = 4, height = 3, device="pdf")
   fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, plotDifference = TRUE)
   ggsave(paste(figsave_dir, "Example", i,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
