@@ -41,7 +41,6 @@ run_one(){
     s=$2
     ./data/pleda_gradient/gradient/gradientSearch ${ins}
     ./data/pleda_gradient/PLEDA/PlackettLuceEDA -i ${ins} -s ${s} 
-    sleep ${s}
 }
 
 
@@ -50,10 +49,11 @@ run_one(){
 open_sem $N
 for ins in `ls -d "data/pleda_gradient/instances/"*`
 do
-    for s in {2..402}
+    for s in {2..1002}
     do
     echo "$ins - $s"
-    run_with_lock run_one ${ins} ${s}
+    sleep 1
+    run_with_lock run_one ${ins} ${s} > "/dev/null"
     done
 done
 
