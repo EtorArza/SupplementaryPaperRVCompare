@@ -2,6 +2,9 @@ library(RVCompare)
 figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
 
 
+print("WARNING: The labels of the Figure were edited with inkscape to add LaTex fonts.")
+
+
 xlims <- c(-0.5,1)
 
 X_A <- uniformDensity(c(0,1))
