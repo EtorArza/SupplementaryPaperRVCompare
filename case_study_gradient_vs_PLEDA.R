@@ -26,9 +26,17 @@ for (sampleSize in sampleSizes){
 
     instance_name_for_save <- tail(strsplit(instance, "/")[[1]],1)
 
+
+
+
+
+
     f1 <- df1[df1["Instance"] == instance,]["Fitness"][[1]]
     f2 <- df2[df2["Instance"] == instance,]["Fitness"][[1]]
 
+    bk <- 52704
+    f1 <- (bk - f1)/bk
+    f2 <- (bk - f2)/bk
 
 
     # choose sampleSize samples
@@ -58,7 +66,7 @@ for (sampleSize in sampleSizes){
       geom_histogram(alpha=0.65, position = 'identity') +
       scale_fill_manual(values=c("#1f77b4", "#ff7f0e")) +
       scale_x_continuous(labels= function(x) format(x, scientific=TRUE), breaks = breaks) +
-      ggplot2::xlab('objective value') +
+      ggplot2::xlab('score') +
       ggplot2::ylab('count') +
       ggplot2::theme_minimal() +
       labs(fill="")
@@ -72,8 +80,8 @@ for (sampleSize in sampleSizes){
       geom_boxplot(width=0.1, fill="white", outlier.shape = 4) +
       ggplot2::theme_minimal() +
       theme(legend.position = "none") +
-      ggplot2::xlab('algorithm') +
-      ggplot2::ylab('objective value')
+      ggplot2::xlab(' ') +
+      ggplot2::ylab('score')
 
       ggsave(paste(figsave_dir, "pleda_gradient_", instance_name_for_save,"_samplesize_", sampleSize, "_boxplot.pdf", sep=""), plot=fig,  width = 4, height = 2, device="pdf")
 
@@ -90,8 +98,8 @@ for (sampleSize in sampleSizes){
       geom_violin(fill="grey", trim = FALSE) +
       geom_boxplot(width=0.1, fill="white", outlier.shape = 4) +
       ggplot2::theme_minimal() +
-      ggplot2::xlab('algorithm') +
-      ggplot2::ylab('objective value') +
+      ggplot2::xlab(' ') +
+      ggplot2::ylab('score') +
       theme(legend.position = "none")
 
 
@@ -99,10 +107,8 @@ for (sampleSize in sampleSizes){
     ggsave(paste(figsave_dir, "pleda_gradient_", instance_name_for_save,"_samplesize_", sampleSize, "_violin.pdf", sep=""), plot=fig,  width = 4, height = 2, device="pdf")
 
 
-
     # simplex plot
-    bk <- 52704
-    testRes <- bSignedRankTest(-(bk - f1)/bk, -(bk - f2)/bk, rope = c(-1e-4,1e-4))
+    testRes <- bSignedRankTest(f1, f2, rope = c(-1e-4,1e-4))
     testRes$posterior.probabilities
     fig<-plotSimplex(testRes, plot.density=TRUE, A='PLEDA',B="gradient", plot.points=TRUE, posterior.label=FALSE, alpha=0.5, point.size=2,font.size = 5)
     print(fig)
@@ -113,18 +119,13 @@ for (sampleSize in sampleSizes){
 
 
 
-    # The difference graph requires a minimization context, therefore in the
-    # case of the LOP, we need to transform it into a minimization problem by
-    # multiplying it by -1
-    samplesA <- -f1
-    samplesB <- -f2
 
     # cat("EDA", median(samplesA))
     # cat("gradient", median(samplesB))
 
 
     # produce X'_A X'_B and difference graph
-    estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.1, nOfEstimationPoints = 200, nOfBootstrapSamples = 1e5)
+    estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(f1, f2, alpha = 0.1, nOfEstimationPoints = 200, nOfBootstrapSamples = 1e5)
     fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, labels=c("PLEDA", "gradient"),  plotDifference = TRUE)
     ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_samplesize_", sampleSize,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
     fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, labels=c("PLEDA", "gradient"), plotDifference = FALSE)
