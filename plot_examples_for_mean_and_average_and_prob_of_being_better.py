@@ -259,7 +259,9 @@ for example_idx in (0,1,2, 3):
 
 
     plt.xlabel("$x$")
-    plt.ylabel("                                Probability density")
+    #plt.setp((ax1,ax2), ylabel='Probability density')
+
+    #plt.ylabel("Probability density")
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
@@ -293,7 +295,7 @@ for example_idx in (0,1,2, 3):
             np.array([max(max(array_list[0]),max(array_list[1]))])
         ), axis=0)
 
-        plt.plot(error_rate_upper_bound, cum_prob, label=f"X_{'A' if i==0 else 'B'}", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
+        plt.plot(error_rate_upper_bound, cum_prob, label=f"$G_{'A' if i==0 else 'B'}$", alpha = 0.35, marker="x" if i==0 else "o", markevery=0.15, fillstyle="none", markersize = 5, )
 
     # get optimal cumulative distribution
     cum_prob, error_rate_upper_bound = get_x_and_Gx_of_cumulative_distribuition(array_list[0])[0], np.minimum(get_x_and_Gx_of_cumulative_distribuition(array_list[0])[1], get_x_and_Gx_of_cumulative_distribuition(array_list[1])[1])
@@ -318,7 +320,9 @@ for example_idx in (0,1,2, 3):
     plt.xlim((left_xlim, right_xlim))   # set the xlim to left, right
 
     plt.xlabel(r"$x$")
-    plt.ylabel("cumulative probablity")
+#    plt.setp((ax1,ax2), ylabel='cumulative probability')
+
+#    plt.ylabel("cumulative probablity")
     #plt.gca().invert_yaxis()
     fig = matplotlib.pyplot.gcf()
     if example_idx==0:

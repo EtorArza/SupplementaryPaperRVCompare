@@ -55,10 +55,10 @@ for i in range(2):
     # ax.text(0.95, 0.95, f"$n = {len(array)}$",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
 
 
-
-ax.text(0.95, 0.95, "Kernel size",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
-print(np.array([band_width/2]) + x_min + 0.9 * (x_max - x_min))
-ax.plot(np.array([-band_width/2,-band_width/2,-band_width/2,band_width/2,band_width/2,band_width/2]) + x_min + 0.91 * (x_max - x_min), np.array([y_max*0.81, y_max*0.79, y_max*0.80, y_max*0.80, y_max*0.81,y_max*0.79]), color = 'grey', lw=1.5)
+# # plot kernel size
+# ax.text(0.95, 0.95, "Kernel size",  color='grey',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', bbox=props)
+# print(np.array([band_width/2]) + x_min + 0.9 * (x_max - x_min))
+# ax.plot(np.array([-band_width/2,-band_width/2,-band_width/2,band_width/2,band_width/2,band_width/2]) + x_min + 0.91 * (x_max - x_min), np.array([y_max*0.81, y_max*0.79, y_max*0.80, y_max*0.80, y_max*0.81,y_max*0.79]), color = 'grey', lw=1.5)
 
 plt.tight_layout()
 plt.subplots_adjust(left=0.12)

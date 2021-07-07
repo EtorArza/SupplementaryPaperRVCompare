@@ -56,7 +56,6 @@ for i, ax in enumerate((ax1, ax2)):
     ax.text(0.95, 0.55, f"$X_{'A' if i==0 else 'B'}$",  color='black',  transform=ax.transAxes,  verticalalignment='top', horizontalalignment='right', )#bbox=props)
     ax.axvline(average, color = 'black', ls='--', lw = 0.85, label=r"Expected value")
     plt.xlabel("x")
-    plt.ylabel("                          Probability density")
 
 ax1.legend(bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3)
 
