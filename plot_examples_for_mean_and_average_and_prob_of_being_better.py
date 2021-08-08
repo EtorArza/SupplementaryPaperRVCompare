@@ -313,9 +313,9 @@ for example_idx in (0,1,2, 3):
     # plt.plot(error_rate_upper_bound, cum_prob, color='black', ls=":", linewidth =0.75, label=r"$\max(G_A(x),G_B(x))$")
     left_xlim, right_xlim = plt.xlim()  # return the current xlim
     linewidth = 0.75
-    plt.plot([left_xlim, right_xlim],[0.5,0.5], lw = linewidth, label=r"Median", ls="-")
-    plt.plot([left_xlim, right_xlim],[0.05,0.05], lw = linewidth, label=r"Best 5%", ls="--")
-    plt.plot([left_xlim, right_xlim],[0.95,0.95], lw = linewidth, label=r"Worst 5%", ls="-.")
+    # plt.plot([left_xlim, right_xlim],[0.5,0.5], lw = linewidth, label=r"Median", ls="-")
+    # plt.plot([left_xlim, right_xlim],[0.05,0.05], lw = linewidth, label=r"Best 5%", ls="--")
+    # plt.plot([left_xlim, right_xlim],[0.95,0.95], lw = linewidth, label=r"Worst 5%", ls="-.")
 
     plt.xlim((left_xlim, right_xlim))   # set the xlim to left, right
 
