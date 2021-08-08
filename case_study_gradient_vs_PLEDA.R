@@ -50,13 +50,13 @@ for (sampleSize in sampleSizes){
 
 
     # print the medians
-    cat("Median of EDA =",median(f1),"\n")
-    cat("Median of gradient =",median(f2),"\n")
+    cat("Median of PL-EDA =",median(f1),"\n")
+    cat("Median of PL-GS =",median(f2),"\n")
 
     # Comply with annoying data format required in ggplot2
     dataHist <- data.frame(
       value=c(f1,f2),
-      type=c(rep("PLEDA", length(f1)), rep("gradient",  length(f2)))
+      type=c(rep("PL-EDA", length(f1)), rep("PL-GS",  length(f2)))
     )
 
     breaks <- c(min(c(f1,f2)), (min(c(f1,f2)) + max(c(f1,f2))) / 2, max(c(f1,f2)))
@@ -110,7 +110,7 @@ for (sampleSize in sampleSizes){
     # simplex plot
     testRes <- bSignedRankTest(f1, f2, rope = c(-1e-4,1e-4))
     testRes$posterior.probabilities
-    fig<-plotSimplex(testRes, plot.density=TRUE, A='PLEDA',B="gradient", plot.points=TRUE, posterior.label=FALSE, alpha=0.5, point.size=2,font.size = 5)
+    fig<-plotSimplex(testRes, plot.density=TRUE, A='PL-EDA',B="PL-GS", plot.points=TRUE, posterior.label=FALSE, alpha=0.5, point.size=2,font.size = 5)
     print(fig)
     ggsave(paste(figsave_dir, "pleda_gradient_", instance_name_for_save,"_samplesize_", sampleSize, "_simplex.png", sep=""), plot=fig,  width = 3, height = 3, device="png", dpi = 400)
 
@@ -121,15 +121,16 @@ for (sampleSize in sampleSizes){
 
 
     # cat("EDA", median(samplesA))
-    # cat("gradient", median(samplesB))
+    # cat("PL-GS", median(samplesB))
 
 
     # produce X'_A X'_B and difference graph
-    estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(f1, f2, alpha = 0.1, nOfEstimationPoints = 200, nOfBootstrapSamples = 1e5)
-    fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, labels=c("PLEDA", "gradient"),  plotDifference = TRUE)
-    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_samplesize_", sampleSize,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
-    fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, labels=c("PLEDA", "gradient"), plotDifference = FALSE)
-    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_samplesize_", sampleSize,"_xprimaAB_raw.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+    estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.05, nOfBootstrapSamples = 1e4)
+    fig <- plot_Y_AB(estimated_Y_AB_bounds, labels=c("PL-EDA", "PL-GS"),  plotDifference = TRUE)
+    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+    print(fig)
+    fig <- plot_Y_AB(estimated_Y_AB_bounds, labels=c("PL-EDA", "PL-GS"), plotDifference = FALSE)
+    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_xprimaAB_raw.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
   }
 }
 
