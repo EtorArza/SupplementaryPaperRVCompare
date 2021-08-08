@@ -20,7 +20,7 @@ cat("done!\n")
 
 
 
-estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.99, nOfEstimationPoints=100, nOfBootstrapSamples = 1e2)
+estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.99, nOfBootstrapSamples = 1e2)
 fig <- plot_X_prima_AB(estimated_X_prima_AB_bounds, plotDifference = TRUE)
 
 diff_estimation <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_estimation - estimated_X_prima_AB_bounds$X_prima_B_cumulative_estimation

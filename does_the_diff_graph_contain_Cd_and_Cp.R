@@ -4,7 +4,6 @@ library("stats")
 N_examples = 6
 nSamples = 4000
 nOfBootstrapSamples = 1e3
-nOfEstimationPoints = 400
 
 
 df <- data.frame(
@@ -76,7 +75,7 @@ for (i in 1:N_examples) {
   Cp <- CpFromDensities(densityA, densityB, xlims)
   cat("done!\n")
 
-  estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.05, nOfEstimationPoints=nOfEstimationPoints, nOfBootstrapSamples = nOfBootstrapSamples)
+  estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.05, nOfBootstrapSamples = nOfBootstrapSamples)
 
   diff_estimation <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_estimation - estimated_X_prima_AB_bounds$X_prima_B_cumulative_estimation
   diff_upper <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_upper - estimated_X_prima_AB_bounds$X_prima_B_cumulative_lower
