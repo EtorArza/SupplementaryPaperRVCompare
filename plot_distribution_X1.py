@@ -1,3 +1,5 @@
+from traceback import print_tb
+from turtle import position
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
@@ -63,10 +65,40 @@ for i in range(2):
 plt.tight_layout()
 plt.subplots_adjust(left=0.12)
 
-plt.xlabel("error rate in the test set")
+plt.xlabel("Error rate in the test set")
 plt.ylabel("Probability density")
 plt.legend(loc = "center right")
 
 plt.savefig('figures/X1_dist.pdf')
 plt.savefig('../paper/images/X1_dist.pdf')
+plt.close()
 
+
+
+for N in [10, 20, 100, 1000, 12000]:
+    
+
+    fig, ax = plt.subplots(1, 1)
+    arrays  = []
+    for i in range(2):
+        x_suffix = ("A","B")[i]
+        df = pd.read_csv(f'data/scores{x_suffix}.csv', header=None)
+        array = np.array((df.iloc[:,0]))
+        array = array[~np.isnan(array)]
+        array = array[100:(100+N)]
+        arrays.append(array)
+
+    print(arrays)
+    print("--------------")
+    ax.boxplot(arrays, labels=["ADAM", "RMSProp"])
+
+    ax.text(0.05,0.95,f'$n = {N}$',horizontalalignment='left', verticalalignment='top', transform = ax.transAxes)
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.12, bottom=0.05)
+    plt.xlabel("Algorithm")
+    plt.ylabel("Error rate in the test set")
+
+    plt.savefig('figures/X1_boxplot_many_points.pdf')
+    plt.savefig(f'../paper/images/X1_boxplot_{N}_points.pdf')
+
+    plt.close()

@@ -18,7 +18,7 @@ print(helperTrapezoidRule(density_Y_A))
 print(ranksObj)
 
 
-estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.1, nOfBootstrapSamples = 1e3, ignoreMinimumLengthCheck = TRUE)
+estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.1, nOfBootstrapSamples = 1e4, ignoreMinimumLengthCheck = TRUE)
 plot_Y_AB(estimated_Y_AB_bounds)
 
 

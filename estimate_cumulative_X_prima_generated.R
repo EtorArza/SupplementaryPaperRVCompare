@@ -1,17 +1,17 @@
 library("RVCompare")
 figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
+dir_to_save_estimation_csv <-"~/Dropbox/BCAM/06_comparing_optimization_algorithms/code/"
 
-
-n_examples <- 4
+n_examples <- 6
 n_colums_per_example <- 10
 
-res_mat <- zeros(4,10)
+res_mat <- zeros(n_examples,n_colums_per_example)
 
 
-for (example_index in 1:4) {
+for (example_index in 1:n_examples) {
   print(paste("--- Example", toString(example_index), "---"))
 
-  nSamples <- 100
+  nSamples <- 5000
   n <- nSamples
   if (example_index==1)
   {
@@ -39,7 +39,20 @@ for (example_index in 1:4) {
     densityB <- mixtureDensity(c(normalDensity(0.3,0.025), normalDensity(0.15, 0.0025)), weights = c(0.95, 0.05))
     xlims <- c(0.05, 0.45)
   }
-
+  else if(example_index==5)
+  {
+    # Beta distribution with alpha=2, beta=5
+    densityA <- function(values){sapply(values, function(x) dbeta(x,2,5))}
+    densityB <- normalDensity(0.5, 0.1)
+    xlims <- c(0,1)
+  }
+  else if(example_index==6)
+  {
+    # log-normal distribution with sigma = 0.25, and mu = 0
+    densityA <- function(values){sapply(values, function(x) dlnorm(x,0,0.25))}
+    densityB <- normalDensity(1, 0.2)
+    xlims <- c(0,4)
+  }
   cat("Computing samples...")
   samplesA <- sampleFromDensity(densityA, nSamples, xlims, nIntervals = 1e5)
   cat("...")
@@ -134,9 +147,7 @@ for (example_index in 1:4) {
   cat("done!\n")
 
 
-
-
-
+  # compute the estimation of the difference (including upper and lower bounds of confidence band)
 
   estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.05, nOfBootstrapSamples = 1e3)
 
@@ -145,8 +156,12 @@ for (example_index in 1:4) {
   diff_lower <- estimated_Y_AB_bounds$Y_A_cumulative_lower - estimated_Y_AB_bounds$Y_B_cumulative_upper
   p <- estimated_Y_AB_bounds$p
 
+  cp_est_from_cum_diff_plot <- mean(diff_estimation) + 0.5
+  cp_lower_from_cum_diff_plot <- mean(diff_lower) + 0.5
+  cp_upper_from_cum_diff_plot <- mean(diff_upper) + 0.5
 
-  # grapical_estimation_cd_values.
+
+  # grapical_estimation of cd.
 
 
   delta_sign <- function(values, delta)
@@ -156,21 +171,15 @@ for (example_index in 1:4) {
     return(sign(copy_values))
   }
 
-  delta <- 0.05
+  delta <- 0.015
 
   gecv_est <- delta_sign(diff_estimation[2:(length(diff_estimation)-1)], delta)
   gecv_upper <- delta_sign(diff_upper[2:(length(diff_upper)-1)], delta)
   gecv_lower <- delta_sign(diff_lower[2:(length(diff_lower)-1)], delta)
 
-  cd_est_from_cum_diff_plot <- (sum(gecv_est) / length(gecv_est) + 1) / 2 * (length(gecv_est) / sum(gecv_est!=0))
-  cd_upper_from_cum_diff_plot <- (sum(gecv_upper) / length(gecv_upper) + 1) / 2 * (length(gecv_upper) / sum(gecv_upper!=0))
-  cd_lower_from_cum_diff_plot <- (sum(gecv_lower) / length(gecv_lower) + 1) / 2 * (length(gecv_lower) / sum(gecv_lower!=0))
-
-  cp_est_from_cum_diff_plot <- mean(diff_estimation) + 0.5
-  cp_lower_from_cum_diff_plot <- mean(diff_lower) + 0.5
-  cp_upper_from_cum_diff_plot <- mean(diff_upper) + 0.5
-
-
+  cd_est_from_cum_diff_plot <- (sum(gecv_est) / length(gecv_est)) / 2 * (length(gecv_est) / sum(gecv_est!=0)) + 0.5
+  cd_upper_from_cum_diff_plot <- (sum(gecv_upper) / length(gecv_upper)) / 2 * (length(gecv_upper) / sum(gecv_upper!=0))  + 0.5
+  cd_lower_from_cum_diff_plot <- (sum(gecv_lower) / length(gecv_lower)) / 2 * (length(gecv_lower) / sum(gecv_lower!=0)) + 0.5
 
 
 
@@ -245,6 +254,7 @@ ggsave(resultPath, plot=cumulativePlot, device="pdf", width = 4, height = 3, )
 
 
 res_df <- as.data.frame(res_mat)
+
 colnames(res_df) <- c("Cd",
                       "Cd_estimation",
                       "cd_est_from_cum_diff_plot",
@@ -256,8 +266,52 @@ colnames(res_df) <- c("Cd",
                       "cp_lower_from_cum_diff_plot",
                       "cp_upper_from_cum_diff_plot")
 
-write.csv(df, "cp_cd_estimation_estimate_cumulative_Y_grnerated.csv", row.names=FALSE, quote=FALSE)
+write.csv(res_df, paste(dir_to_save_estimation_csv, "cp_cd_estimation_estimate_cumulative_Y_grnerated.csv"), row.names=FALSE)
 
+
+colors <- c("red", "orange", "blue")
+extra_shift <- c(0.1, 0.2, 0.3)
+
+
+# Plot estimated Cd
+fig <- ggplot2::ggplot(data.frame(), aes(x,y)) +
+  ggplot2::xlim(c(1,n_examples+1)) +
+  ggplot2::ylim(c(0,1)) +
+  ggplot2::theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[1]],y=res_mat[1:n_examples,1]),colour=colors[[1]], shape=1)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[2]],y=res_mat[1:n_examples,2]),colour=colors[[2]], shape=2)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,3]),colour=colors[[3]], shape=4)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,4]),colour=colors[[3]], shape=3)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,5]),colour=colors[[3]], shape=3)
+
+fig <- fig + ggplot2::scale_x_continuous("Example", 1:6+0.2, labels = 1:6)
+fig <- fig + ggplot2::ylab(" ")
+
+ggsave(paste(figsave_dir, "estimated_Cd_xprimaABDiff_all_examples.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+
+print(fig)
+
+
+
+# Plot estimated Cp
+fig <- ggplot2::ggplot(data.frame(), aes(x,y)) +
+  ggplot2::xlim(c(1,n_examples+1)) +
+  ggplot2::ylim(c(0,1)) +
+  ggplot2::theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[1]],y=res_mat[1:n_examples,6]),colour=colors[[1]], shape=1)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[2]],y=res_mat[1:n_examples,7]),colour=colors[[2]], shape=2)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,8]),colour=colors[[3]], shape=4)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,9]),colour=colors[[3]], shape=3)
+fig <- fig + ggplot2::geom_point(aes(x=1:n_examples + extra_shift[[3]],y=res_mat[1:n_examples,10]),colour=colors[[3]], shape=3)
+
+fig <- fig + ggplot2::scale_x_continuous("Example", 1:6+0.2, labels = 1:6)
+fig <- fig + ggplot2::ylab(" ")
+
+ggsave(paste(figsave_dir, "estimated_Cp_xprimaABDiff_all_examples.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+
+print(fig)
 
 
 

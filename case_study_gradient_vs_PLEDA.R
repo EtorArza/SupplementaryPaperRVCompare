@@ -10,8 +10,8 @@ figsave_dir <- "/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/pa
 sampleSizes <- c(1000)
 
 
-df1 <- read.csv(csv_path1, sep = ";")
-df2 <- read.csv(csv_path2, sep = ";")
+df1 <- read.csv(csv_path1, sep = ";", header = FALSE)
+df2 <- read.csv(csv_path2, sep = ";", header = FALSE)
 
 
 names(df1) <- c("Instance", "Fitness")
