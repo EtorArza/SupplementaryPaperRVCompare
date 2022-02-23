@@ -406,7 +406,7 @@ library("glue")
 
 for (i in c(20,100,1000)) {
   plt <- cumulative_difference_plot(X_A_observed = X_A[1:(i)], X_B_observed = X_B[1:(i)], TRUE, labelA = "ADAM", labelB = "RMSProp", ignoreMinimumLengthCheck = TRUE)
-  pdf(glue("/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/X1_cdp_{i}_points.pdf")) 
+  pdf(glue("/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/X1_cdp_{i}_points.pdf"),  width=3, height=3) 
   print(plt)
   dev.off()
 }
