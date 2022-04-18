@@ -5,8 +5,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy import stats 
 from sklearn.neighbors import KernelDensity
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
-
+# matplotlib.rcParams.update({'font.size': 20})
 
 
 # plot distribution of X_A, X_B
@@ -69,8 +72,8 @@ plt.xlabel("Error rate in the test set")
 plt.ylabel("Probability density")
 plt.legend(loc = "center right")
 
-plt.savefig('figures/X1_dist.pdf')
-plt.savefig('../paper/images/X1_dist.pdf')
+plt.savefig('figures/X1_dist_smolfont.pdf')
+plt.savefig('../paper/images/X1_dist_smolfont.pdf')
 plt.close()
 
 
@@ -94,11 +97,28 @@ for N in [10, 20, 100, 1000, 12000]:
 
     ax.text(0.05,0.95,f'$n = {N}$',horizontalalignment='left', verticalalignment='top', transform = ax.transAxes)
     plt.tight_layout()
-    plt.subplots_adjust(left=0.12, bottom=0.05)
+    plt.subplots_adjust(left=0.14, bottom=0.07)
     plt.xlabel("Algorithm")
     plt.ylabel("Error rate in the test set")
 
     plt.savefig('figures/X1_boxplot_many_points.pdf')
     plt.savefig(f'../paper/images/X1_boxplot_{N}_points.pdf')
+
+    plt.close()
+
+
+    fig, ax = plt.subplots(1, 1)
+    bins = np.linspace(0.23, 0.35, 30)
+    ax.hist(arrays, label=["ADAM", "RMSProp"])
+
+    # ax.text(0.05,0.95,f'$n = {N}$',horizontalalignment='left', verticalalignment='top', transform = ax.transAxes)
+    plt.tight_layout()
+    plt.legend()
+    plt.subplots_adjust(left=0.16, bottom=0.15)
+    plt.xlabel("Error rate in the test set")
+    plt.ylabel("Count")
+
+    plt.savefig(f'figures/X1_hist_{N}_points.pdf')
+    plt.savefig(f'../paper/images/X1_hist_{N}_points.pdf')
 
     plt.close()
