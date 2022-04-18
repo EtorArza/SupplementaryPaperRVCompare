@@ -187,7 +187,7 @@ def f_divergence(X_A_observed, X_B_observed, f, nbins):
     
 
 
-for example_idx in (0,1,2, 3):
+for example_idx in (0,1, 2, 3, 4):
     print("-------------")
     print("EXAMPLE",example_idx+1)
     print("-------------")
@@ -229,6 +229,12 @@ for example_idx in (0,1,2, 3):
             else: #Classifier B
                 df = pd.DataFrame(np.append(np.random.normal(loc = 0.30, scale = 0.025, size = int(n*0.95)),np.random.normal(loc =0.15, scale = 0.0025, size = int(n*0.05))))
 
+        elif example_idx == 4:
+            bin_length = 0.00005
+            if i == 0: #Classifier A
+                df = pd.DataFrame(np.random.uniform(low = 0.2, high=0.21, size = n))
+            else: #Classifier B
+                df = pd.DataFrame(abs(np.append(np.random.uniform(low = 0.19, high=0.20, size = int(n*0.925)),np.random.uniform(low = 0.04, high=0.05, size = int(n*0.075)))))
 
 
         array = np.array((df.iloc[:,0]))
