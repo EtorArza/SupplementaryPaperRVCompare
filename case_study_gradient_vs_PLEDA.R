@@ -1,13 +1,23 @@
-library(RVCompare)
-library(ggplot2)
-library(scmamp)
 
-setwd("~/Dropbox/BCAM/06_comparing_optimization_algorithms/code")
+# Install and load dependencies
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(RVCompare, ggplot2, scmamp, MCMCpack, devtools, geometry)
+pacman::p_load_gh("b0rxa/scmamp")
+
+
+
+# if (!require("devtools")) {
+#   install.packages("devtools")
+# }
+
+# devtools::install_github("b0rxa/scmamp")
+# library(scmamp)
+
 csv_path1 <- "data/pleda_gradient/results/pleda_results.csv"
 csv_path2 <- "data/pleda_gradient/results/gradient_results.csv"
-figsave_dir <- "/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/case_study_eda_pl/"
+figsave_dir <- "figures/"
 
-sampleSizes <- c(1000)
+sampleSizes <- c(20, 1000)
 
 
 df1 <- read.csv(csv_path1, sep = ";", header = FALSE)
@@ -46,13 +56,14 @@ for (sampleSize in sampleSizes){
 
     test_res <- wilcox.test(f1,f2)
 
+    cat("\nWith a sample size of n =", sampleSize, "\n")
     cat("The p-value of the Mann-Withney test was p =", test_res$p.value, "\n")
 
 
     # print the medians
     cat("Median of PL-EDA =",median(f1),"\n")
     cat("Median of PL-GS =",median(f2),"\n")
-
+    print("---")
     # Comply with annoying data format required in ggplot2
     dataHist <- data.frame(
       value=c(f1,f2),
@@ -123,14 +134,16 @@ for (sampleSize in sampleSizes){
     # cat("EDA", median(samplesA))
     # cat("PL-GS", median(samplesB))
 
+    print("---")
+
 
     # produce X'_A X'_B and difference graph
-    estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.05, nOfBootstrapSamples = 1e4)
+    estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.05, nOfBootstrapSamples = 1e4, ignoreMinimumLengthCheck=TRUE)
     fig <- plot_Y_AB(estimated_Y_AB_bounds, labels=c("PL-EDA", "PL-GS"),  plotDifference = TRUE)
-    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save, "_samplesize_", sampleSize, "_xprimaABDiff.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
     print(fig)
     fig <- plot_Y_AB(estimated_Y_AB_bounds, labels=c("PL-EDA", "PL-GS"), plotDifference = FALSE)
-    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save,"_xprimaAB_raw.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
+    ggsave(paste(figsave_dir, "pleda_gradient_",instance_name_for_save, "_samplesize_", sampleSize, "_xprimaAB_raw.pdf", sep=""), plot=fig,  width = 4, height = 3, device="pdf")
   }
 }
 
