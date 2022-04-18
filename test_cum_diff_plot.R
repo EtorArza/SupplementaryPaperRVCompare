@@ -17,8 +17,6 @@ print(helperTrapezoidRule(density_Y_A))
 
 print(ranksObj)
 
-
-estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(f1, f2, alpha = 0.1, nOfBootstrapSamples = 1e4, ignoreMinimumLengthCheck = TRUE)
-plot_Y_AB(estimated_Y_AB_bounds)
-
+RVCompare::cumulative_difference_plot(f1, f2, alpha = 0.1, nOfBootstrapSamples = 1e4, ignoreMinimumLengthCheck = TRUE, isMinimizationProblem = TRUE)
+plot_data <- RVCompare::get_Y_AB_bounds_bootstrap(f1,f2,alpha = 0.1, nOfBootstrapSamples = 1e4, ignoreMinimumLengthCheck = TRUE)
 
