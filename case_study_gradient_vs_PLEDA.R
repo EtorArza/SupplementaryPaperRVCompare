@@ -17,7 +17,7 @@ csv_path1 <- "data/pleda_gradient/results/pleda_results.csv"
 csv_path2 <- "data/pleda_gradient/results/gradient_results.csv"
 figsave_dir <- "figures/"
 
-sampleSizes <- c(20, 1000)
+sampleSizes <- c(10, 20, 1000)
 
 
 df1 <- read.csv(csv_path1, sep = ";", header = FALSE)

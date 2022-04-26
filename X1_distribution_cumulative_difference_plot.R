@@ -1,3 +1,6 @@
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(RVCompare, ggplot2)
+
 X_A <- c(0.02749997, 0.02960002, 0.0255    , 0.02579999, 0.02649999,
          0.03130001, 0.02700001, 0.02710003, 0.02759999, 0.02810001,
          0.02450001, 0.02600002, 0.02670002, 0.0255    , 0.02600002,
@@ -400,13 +403,11 @@ X_B <- c(0.02579999, 0.02770001, 0.02609998, 0.0255    , 0.0262    ,
          0.02869999, 0.0302    , 0.02829999, 0.02679998, 0.02740002,
          0.03049999, 0.0244    , 0.02429998, 0.02569997, 0.02609998)
 
-library("RVCompare")
-library("glue")
 
 
-for (i in c(20,100,1000)) {
+for (i in c(10,20,100,1000)) {
   plt <- cumulative_difference_plot(X_A_observed = X_A[1:(i)], X_B_observed = X_B[1:(i)], TRUE, labelA = "ADAM", labelB = "RMSProp", ignoreMinimumLengthCheck = TRUE)
-  pdf(glue("/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/X1_cdp_{i}_points.pdf"),  width=3, height=3) 
+  pdf(paste("/home/paran/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/X1_cdp_",i,"_points.pdf", sep=""),  width=3, height=3) 
   print(plt)
   dev.off()
 }
