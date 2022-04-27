@@ -72,8 +72,7 @@ plt.xlabel("Error rate in the test set")
 plt.ylabel("Probability density")
 plt.legend(loc = "center right")
 
-plt.savefig('figures/X1_dist_smolfont.pdf')
-plt.savefig('../paper/images/X1_dist_smolfont.pdf')
+plt.savefig('figures/figure1.pdf')
 plt.close()
 
 
@@ -101,9 +100,8 @@ for N in [10, 20, 100, 1000, 12000]:
     plt.xlabel("Algorithm")
     plt.ylabel("Error rate in the test set")
 
-    plt.savefig('figures/X1_boxplot_many_points.pdf')
-    plt.savefig(f'../paper/images/X1_boxplot_{N}_points.pdf')
-
+    plt.savefig('figures/X1_boxplot_{N}_points.pdf')
+ 
     plt.close()
 
 
@@ -119,6 +117,5 @@ for N in [10, 20, 100, 1000, 12000]:
     plt.ylabel("Count")
 
     plt.savefig(f'figures/X1_hist_{N}_points.pdf')
-    plt.savefig(f'../paper/images/X1_hist_{N}_points.pdf')
 
     plt.close()
