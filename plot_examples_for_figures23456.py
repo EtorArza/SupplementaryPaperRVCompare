@@ -274,7 +274,7 @@ for example_idx in (0,1, 2, 3, 4):
     ax1.legend(by_label.values(), by_label.keys(),bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3, framealpha=1.0, )
 
     plt.tight_layout()
-    plt.savefig(f'figures/case_{example_idx+1}_mean_median.pdf')
+    plt.savefig(f'figures/example_{example_idx+1}_mean_median.pdf')
     plt.close()
 
 
@@ -336,7 +336,7 @@ for example_idx in (0,1, 2, 3, 4):
     else:
         fig.set_size_inches(4, 1.9)      
     plt.tight_layout()
-    plt.savefig(f'figures/case_{example_idx+1}_cdf.pdf')
+    plt.savefig(f'figures/example_{example_idx+1}_cdf.pdf')
 
     plt.close()
 
