@@ -60,6 +60,4 @@ for i, ax in enumerate((ax1, ax2)):
 ax1.legend(bbox_to_anchor=(0,1.08,1,0.2), loc="lower left", mode="expand", borderaxespad=0, ncol=3)
 
 plt.tight_layout()
-plt.savefig('figures/counterexample_being_better_dist.pdf')
-plt.savefig('../paper/images/counterexample_being_better_dist.pdf')
-
+plt.savefig('figures/fig2.pdf')
