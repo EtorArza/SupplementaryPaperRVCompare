@@ -8,3 +8,5 @@
 PlackettLuceEDA
 gradientSearch
 *.png
+!data/scoresA.csv
+!data/scoresB.csv
