@@ -100,7 +100,7 @@ for N in [10, 20, 100, 1000, 12000]:
     plt.xlabel("Algorithm")
     plt.ylabel("Error rate in the test set")
 
-    plt.savefig('figures/X1_boxplot_{N}_points.pdf')
+    plt.savefig(f'figures/X1_boxplot_{N}_points.pdf')
  
     plt.close()
 
