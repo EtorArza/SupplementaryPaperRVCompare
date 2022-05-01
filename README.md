@@ -1,9 +1,11 @@
 # SupplementaryPaperRVCompare
 
 Repo for reproducing the figures in the [paper](
-https://doi.org/10.48550/arXiv.2203.07889).
+https://doi.org/10.48550/arXiv.2203.07889). The code in this repo was tested in a clean install of Ubuntu 20.04.
+
 
 ## Installation
+
 
 Install dependencies with apt:
 
@@ -11,9 +13,10 @@ Install dependencies with apt:
 sudo apt update
 sudo apt install r-base
 sudo apt install python3-pip
+sudo apt install python3-tk
 ```
 
-The .R scripts will install and load the required dependencies.
+The .R scripts will install and load the required dependencies within the scripts themselves.
 For the python dependencies, 
 
 ```bash
@@ -61,9 +64,76 @@ Again wait untill 10000 samples are generated.
 
 #### Step 1: 
 
+Plot the figure from the generated samples.
 
+```bash
+python3 plot_distribution_X1.py
+```
+
+
+<br />
+<br />
 
 ---
+
+<br />
+<br />
+
+### Figure 2
+
+```bash
+python3 plot_figure2.py
+```
+
+<img src="readmeAssets/Fig2.png" alt="drawing" width="400"/>
+
+
+<br />
+<br />
+
+---
+
+<br />
+<br />
+
+
+### Figure 3 (example_1_mean_median.pdf)
+
+<img src="readmeAssets/Fig3.png" alt="drawing" width="400"/>
+
+### Figure 4 (example_2_mean_median.pdf)
+
+
+<img src="readmeAssets/Fig4.png" alt="drawing" width="400"/>
+
+### Figure 5a (example_1_cdf.pdf) and 5b (example_2_cdf.pdf)
+
+
+<img src="readmeAssets/Fig5a.png" alt="drawing" width="300"/>
+
+<img src="readmeAssets/Fig5b.png" alt="drawing" width="300"/>
+
+### Figure 6 (example_5_mean_median.pdf)
+
+
+<img src="readmeAssets/Fig6.png" alt="drawing" width="400"/>
+
+
+
+All of these figures are generated with 
+
+```bash
+python3 plot_examples_for_figures3456.py
+```
+
+<br />
+<br />
+
+---
+
+<br />
+<br />
+
 
 
 ## License
