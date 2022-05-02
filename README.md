@@ -16,7 +16,18 @@ sudo apt install python3-pip
 sudo apt install python3-tk
 ```
 
-The .R scripts will install and load the required dependencies within the scripts themselves.
+R packages:
+```bash
+# Load R session
+R
+
+# Install packages
+install.packages("pacman") # say yes if asked
+pacman::p_load(RVCompare, ggplot2, scmamp, MCMCpack, devtools, geometry)
+pacman::p_load_gh("b0rxa/scmamp")
+```
+
+
 For the python dependencies, 
 
 ```bash
@@ -81,11 +92,13 @@ python3 plot_distribution_X1.py
 
 ### Figure 2
 
+<img src="readmeAssets/Fig2.png" alt="drawing" width="400"/>
+
+
 ```bash
 python3 plot_figure2.py
 ```
 
-<img src="readmeAssets/Fig2.png" alt="drawing" width="400"/>
 
 
 <br />
@@ -120,7 +133,7 @@ python3 plot_figure2.py
 
 
 
-All of these figures are generated with 
+Figures 3-6 are generated with:
 
 ```bash
 python3 plot_examples_for_figures3456.py
@@ -133,6 +146,19 @@ python3 plot_examples_for_figures3456.py
 
 <br />
 <br />
+
+
+
+### Figure 7
+
+<img src="readmeAssets/Fig7.png" alt="drawing" width="400"/>
+
+
+```bash
+python3 plot_figure2.py
+```
+
+
 
 
 
