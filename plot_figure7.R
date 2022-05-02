@@ -1,4 +1,7 @@
-library(RVCompare)
+# Install and load dependencies
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(RVCompare, ggplot2)
+
 #figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
 
 figsave_dir <- "figures/"
