@@ -14,6 +14,9 @@ sudo apt update
 sudo apt install r-base
 sudo apt install python3-pip
 sudo apt install python3-tk
+sudo apt install libssl-dev
+sudo apt install libxml2-dev
+
 ```
 
 R packages:
