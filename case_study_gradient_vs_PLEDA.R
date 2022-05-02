@@ -2,7 +2,6 @@
 # Install and load dependencies
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(RVCompare, ggplot2, scmamp, MCMCpack, devtools, geometry)
-pacman::p_load_gh("b0rxa/scmamp")
 
 
 
