@@ -29,8 +29,9 @@ R
 install.packages("pacman") # say yes if asked
 pacman::p_load(RVCompare, ggplot2, MCMCpack, devtools, geometry)
 pacman::p_load_gh("b0rxa/scmamp")
-source("https://bioconductor.org/biocLite.R")
-biocLite("graph")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("graph")
 ```
 
 
