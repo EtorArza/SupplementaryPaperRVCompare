@@ -16,6 +16,7 @@ sudo apt install python3-pip
 sudo apt install python3-tk
 sudo apt install libssl-dev
 sudo apt install libxml2-dev
+sudo apt install libcurl4-openssl-dev
 
 ```
 
@@ -26,8 +27,10 @@ R
 
 # Install packages
 install.packages("pacman") # say yes if asked
-pacman::p_load(RVCompare, ggplot2, scmamp, MCMCpack, devtools, geometry)
+pacman::p_load(RVCompare, ggplot2, MCMCpack, devtools, geometry)
 pacman::p_load_gh("b0rxa/scmamp")
+source("https://bioconductor.org/biocLite.R")
+biocLite("graph")
 ```
 
 
