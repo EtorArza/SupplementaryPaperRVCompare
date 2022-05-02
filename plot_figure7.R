@@ -1,5 +1,7 @@
 library(RVCompare)
-figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
+#figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
+
+figsave_dir <- "figures/"
 
 
 print("WARNING: The labels of the Figure were edited with inkscape to add LaTex fonts.")
@@ -70,5 +72,5 @@ cumulativePlot = ggplot2::ggplot() +
 
 print(cumulativePlot)
 
-resultPath <- paste(figsave_dir, "impossibility_porp7and1_cumulative.pdf", sep="")
+resultPath <- paste(figsave_dir, "figure7.pdf", sep="")
 ggsave(resultPath, plot=cumulativePlot, device="pdf", width = 4, height = 2, )
