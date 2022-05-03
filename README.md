@@ -70,7 +70,9 @@ Generate the samples for A - *ADAM*:
 ```bash
 python3 get_sample.py A
 ```
-Wait until the 10000th sample is generated (seed = 10000 will be printed).
+Wait until the 10000th sample is generated, at which point, the terminal should say:
+
+> *seed = 10000* 
 
 Then we do the same for B - *RMSProp*.
 
@@ -117,23 +119,26 @@ python3 plot_figure2.py
 <br />
 
 
-### Figure 3 (example_1_mean_median.pdf)
+### Figure 3
+example_1_mean_median.pdf
 
 <img src="readmeAssets/Fig3.png" alt="drawing" width="400"/>
 
-### Figure 4 (example_2_mean_median.pdf)
+### Figure 4
+example_2_mean_median.pdf
 
 
 <img src="readmeAssets/Fig4.png" alt="drawing" width="400"/>
 
-### Figure 5a (example_1_cdf.pdf) and 5b (example_2_cdf.pdf)
-
+### Figure 5a and 5b
+example_1_cdf.pdf and example_2_cdf.pdf
 
 <img src="readmeAssets/Fig5a.png" alt="drawing" width="300"/>
 
 <img src="readmeAssets/Fig5b.png" alt="drawing" width="300"/>
 
-### Figure 6 (example_5_mean_median.pdf)
+### Figure 6
+example_5_mean_median.pdf
 
 
 <img src="readmeAssets/Fig6.png" alt="drawing" width="400"/>
@@ -175,14 +180,16 @@ python3 plot_figure7.py
 
 
 
-### Figure 10 (Example2_xprimaAB.pdf)
+### Figure 10
+Example2_xprimaAB.pdf
 
 <img src="readmeAssets/fig10.png" alt="drawing" width="400"/>
 
 
 
 
-### Figure 12 (Example2_xprimaABDiff.pdf)
+### Figure 12
+Example2_xprimaABDiff.pdf
 
 <img src="readmeAssets/fig12.png" alt="drawing" width="400"/>
 
@@ -219,6 +226,27 @@ Rscript plot_figure13.R
 
 ### PL-EDA vs PL-GS (Figures 14-17)
 
+### Figure 14 
+pleda_gradient_N-t70n11xx_samplesize_1000_histogram.pdf
+
+<img src="readmeAssets/fig14.png" alt="drawing" width="400"/>
+
+### Figure 15
+pleda_gradient_N-t70n11xx_samplesize_1000_violin.pdf
+
+<img src="readmeAssets/fig15.png" alt="drawing" width="400"/>
+
+### Figure 16
+pleda_gradient_N-t70n11xx_samplesize_1000_simplex.png)
+
+<img src="readmeAssets/fig16.png" alt="drawing" width="400"/>
+
+### Figure 17
+pleda_gradient_N-t70n11xx_xprimaABDiff.pdf
+
+<img src="readmeAssets/fig17.png" alt="drawing" width="400"/>
+
+
 #### Step 0 (*Optional, takes a lot of time*): 
 Delete the previously computed results and compute them again. Execute the launch_pleda_gradient.sh script with a parameter indicating the number of parallel processes to launch. For example, to launch 4 parallel processes, 
 
@@ -226,23 +254,18 @@ Delete the previously computed results and compute them again. Execute the launc
 bash launch_pleda_gradient.sh 4
 ```
 
+Wait until the 1000th sample is generated, at which point, the terminal should say:
 
-Wait until the 10000th sample is generated (seed = 10000 will be printed).
+> *done data/pleda_gradient/instances/N-t70n11xx - seed = 1000* 
 
-Then we do the same for B - *RMSProp*.
-
-```bash
-python3 get_sample.py B
-```
-Again wait untill 10000 samples are generated.
 
 
 #### Step 1: 
 
-Plot the figure from the generated samples.
+Plot the figures from the generated samples.
 
 ```bash
-python3 plot_distribution_X1.py
+Rscript case_study_gradient_vs_PLEDA.R
 ```
 
 
