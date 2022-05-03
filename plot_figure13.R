@@ -53,7 +53,7 @@ testRes$posterior.probabilities
 fig<-plotSimplex(testRes, plot.density=TRUE, A='X_A',B="X_B", plot.points=TRUE, posterior.label=FALSE, alpha=0.5, point.size=2,font.size = 5)
 print(fig)
 
-ggsave(paste(figsave_dir, "simplex_case2.png", sep=""), plot=fig,  width = 3, height = 3, device="png", dpi = 400)
+ggsave(paste(figsave_dir, "fig13.png", sep=""), plot=fig,  width = 3, height = 3, device="png", dpi = 400)
 
 
 
