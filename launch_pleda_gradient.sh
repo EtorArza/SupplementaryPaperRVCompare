@@ -11,7 +11,7 @@ if [ $# -ne 1 ]
 fi
 
 N=$1
-
+N=$((N - 1))
 
 # compile
 rm "data/pleda_gradient/results" -r
