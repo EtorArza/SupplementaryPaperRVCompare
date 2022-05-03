@@ -1,5 +1,16 @@
 # Edit the number of parallel executions. 
-N=8
+
+if [ $# -ne 1 ]
+  then
+    echo "usage: 
+    bash launch_pleda_gradient.sh <n_parallel_cores>
+    To launch with 4 parallel processes, 
+    bash launch_pleda_gradient.sh 4
+    "
+    exit 1
+fi
+
+N=$1
 
 
 # compile
