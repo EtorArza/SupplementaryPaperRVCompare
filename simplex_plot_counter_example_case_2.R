@@ -8,7 +8,7 @@
 library(scmamp)
 library(RVCompare)
 
-figsave_dir <- "~/Dropbox/BCAM/06_comparing_optimization_algorithms/paper/images/Rfigures/"
+figsave_dir <- "figures/"
 
 
 N_SAMPLES_PPER_RV <- 400
