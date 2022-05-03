@@ -162,11 +162,88 @@ python3 plot_examples_for_figures3456.py
 
 
 ```bash
-python3 plot_figure2.py
+python3 plot_figure7.py
+```
+
+<br />
+<br />
+
+---
+
+<br />
+<br />
+
+
+
+### Figure 10 (Example2_xprimaAB.pdf)
+
+<img src="readmeAssets/fig10.png" alt="drawing" width="400"/>
+
+
+
+
+### Figure 12 (Example2_xprimaABDiff.pdf)
+
+<img src="readmeAssets/fig12.png" alt="drawing" width="400"/>
+
+
+```bash
+Rscript estimate_cumulative_X_prima_generated.R
 ```
 
 
+<br />
+<br />
 
+---
+
+<br />
+<br />
+
+
+### Figure 13
+
+<img src="readmeAssets/fig13.png" alt="drawing" width="400"/>
+
+```bash
+Rscript plot_figure13.R
+```
+
+<br />
+<br />
+
+---
+
+<br />
+<br />
+
+### PL-EDA vs PL-GS (Figures 14-17)
+
+#### Step 0 (*Optional, takes a lot of time*): 
+Delete the previously computed results and compute them again. Execute the launch_pleda_gradient.sh script with a parameter indicating the number of parallel processes to launch. For example, to launch 4 parallel processes, 
+
+```bash
+bash launch_pleda_gradient.sh 4
+```
+
+
+Wait until the 10000th sample is generated (seed = 10000 will be printed).
+
+Then we do the same for B - *RMSProp*.
+
+```bash
+python3 get_sample.py B
+```
+Again wait untill 10000 samples are generated.
+
+
+#### Step 1: 
+
+Plot the figure from the generated samples.
+
+```bash
+python3 plot_distribution_X1.py
+```
 
 
 ## License
