@@ -1,10 +1,10 @@
 # Install and load dependencies
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(RVCompare, ggplot2)
-figsave_dir <- "images/Rfigures/"
+figsave_dir <- "figures/"
 
 
-dir_to_save_estimation_csv <-"~/Dropbox/BCAM/06_comparing_optimization_algorithms/code/"
+dir_to_save_estimation_csv <-"figures/"
 
 n_examples <- 6
 n_colums_per_example <- 10
