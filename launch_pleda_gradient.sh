@@ -52,6 +52,7 @@ run_one(){
     s=$2
     ./data/pleda_gradient/gradient/gradientSearch ${ins}
     ./data/pleda_gradient/PLEDA/PlackettLuceEDA -i ${ins} -s ${s} 
+    echo "done $ins - seed = $s" 1>&2
 }
 
 
@@ -62,7 +63,7 @@ for ins in `ls -d "data/pleda_gradient/instances/"*`
 do
     for s in {2..1002}
     do
-    echo "$ins - $s"
+    echo "computing $ins - seed = $s"
     sleep 1
     run_with_lock run_one ${ins} ${s} > "/dev/null"
     done
