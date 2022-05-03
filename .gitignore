@@ -10,4 +10,6 @@ gradientSearch
 *.png
 !data/scoresA.csv
 !data/scoresB.csv
+!data/pleda_gradient/results/gradient_results.csv
+!data/pleda_gradient/results/pleda_results.csv
 !readmeAssets/*
