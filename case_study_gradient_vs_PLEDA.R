@@ -73,8 +73,8 @@ for (sampleSize in sampleSizes){
 
     # Histogram
     fig <- ggplot(data=dataHist, aes(x=value, fill=type)) +
-      geom_histogram(alpha=0.65, position = 'identity') +
-      scale_fill_manual(values=c("#1f77b4", "#ff7f0e")) +
+      geom_histogram(alpha=0.70, position = 'identity') +
+      scale_fill_manual(values=c("grey20", "grey60")) + theme_bw() +
       scale_x_continuous(labels= function(x) format(x, scientific=TRUE), breaks = breaks) +
       ggplot2::xlab('score') +
       ggplot2::ylab('count') +
