@@ -15,7 +15,7 @@ df <- data.frame(
   Cp_from_plot_estimation=numeric(),
   Cp_from_plot_lower=numeric(),
   Cp_from_plot_upper=numeric()
-                 )
+)
 
 
 
@@ -75,12 +75,12 @@ for (i in 1:N_examples) {
   Cp <- CpFromDensities(densityA, densityB, xlims)
   cat("done!\n")
 
-  estimated_X_prima_AB_bounds <- get_X_prima_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.05, nOfBootstrapSamples = nOfBootstrapSamples)
+  estimated_Y_AB_bounds <- get_Y_AB_bounds_bootstrap(samplesA, samplesB, alpha = 0.05, nOfBootstrapSamples = nOfBootstrapSamples)
 
-  diff_estimation <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_estimation - estimated_X_prima_AB_bounds$X_prima_B_cumulative_estimation
-  diff_upper <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_upper - estimated_X_prima_AB_bounds$X_prima_B_cumulative_lower
-  diff_lower <- estimated_X_prima_AB_bounds$X_prima_A_cumulative_lower - estimated_X_prima_AB_bounds$X_prima_B_cumulative_upper
-  p <- estimated_X_prima_AB_bounds$p
+  diff_estimation <- estimated_Y_AB_bounds$Y_A_cumulative_estimation - estimated_Y_AB_bounds$Y_B_cumulative_estimation
+  diff_upper <- estimated_Y_AB_bounds$Y_A_cumulative_upper - estimated_Y_AB_bounds$Y_B_cumulative_lower
+  diff_lower <- estimated_Y_AB_bounds$Y_A_cumulative_lower - estimated_Y_AB_bounds$Y_B_cumulative_upper
+  p <- estimated_Y_AB_bounds$p
 
   Cd_from_plot_estimation <- mean(diff_estimation[2:(length(diff_estimation)-1)] > 0)
   Cd_from_plot_lower <- mean(diff_lower[2:(length(diff_estimation)-1)] > 0)
@@ -88,21 +88,18 @@ for (i in 1:N_examples) {
   Cp_from_plot_estimation <- mean(diff_estimation) + 0.5
   Cp_from_plot_lower <- mean(diff_lower) + 0.5
   Cp_from_plot_upper <- mean(diff_upper) + 0.5
-  
-  
+
+
   cat("\n")
   cat("Cd = ", Cd, " ~ proportion where positive = ", Cd_from_plot_estimation, "in (", Cd_from_plot_lower, ", ", Cd_from_plot_upper, ")", "\n")
   cat("Cp = ", Cp, " ~ integral + 0.5  = ", Cp_from_plot_estimation, "in (", Cp_from_plot_lower, ", ", Cp_from_plot_upper, ")", "\n")
 
   print("------------------")
-  
+
   df[nrow(df) + 1,] = c(Cd, Cd_from_plot_estimation, Cd_from_plot_lower, Cd_from_plot_upper, Cp, Cp_from_plot_estimation, Cp_from_plot_lower, Cp_from_plot_upper)
-  
+
 }
 
 print(df)
 
 write.csv(df, "results_does_the_diff_graph_contain_Cd_and_Cp.csv")
-
-
-
